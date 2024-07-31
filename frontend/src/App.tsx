@@ -1,11 +1,20 @@
-
-import './App.css'
-
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import RootPage from "./routes/RootPage";
+import HomePage from "./routes/HomePage";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootPage />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+    ],
+  },
+]);
 function App() {
-
-  return (
-    <h1>Welcome to MyShop</h1>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
