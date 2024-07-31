@@ -1,7 +1,12 @@
-import HomeScreen from "../screens/HomeScreen";
+import Products from "../components/products/Products";
 
 const HomePage = () => {
-  return <HomeScreen />;
+  return (
+    <>
+      <h1>Latest products</h1>
+      <Products />
+    </>
+  );
 };
 
 export default HomePage;
