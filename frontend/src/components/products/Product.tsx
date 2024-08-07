@@ -10,11 +10,11 @@ const Product: React.FC<Props> = (props) => {
   const { product } = props;
   return (
     <Card className="my-3 p-3 rounded">
-      <Link to={`/product/${product.id}`}>
+      <Link to={`/products/${product.id}`}>
         <Card.Img src={product.image} variant="top" />
       </Link>
       <Card.Body>
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/products/${product.id}`}>
           <Card.Title as="div" className="product-title">
             <strong>{product.name}</strong>
           </Card.Title>

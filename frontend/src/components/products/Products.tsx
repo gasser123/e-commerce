@@ -1,7 +1,11 @@
 import { Row, Col } from "react-bootstrap";
-import products from "../../products";
 import Product from "./Product";
-const Products = () => {
+import IProduct from "../../interfaces/product.interface";
+interface Props{
+products: IProduct[]; 
+}
+const Products: React.FC<Props> = (props) => {
+  const {products} = props;
   return (
     <Row>
       {products.map((product) => (
