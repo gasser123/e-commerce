@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Review } from "./review.entity";
 import { Repository } from "typeorm";
-import { Product } from "./product.entity";
 @Injectable()
-export class ProductsService {
-  repo: Repository<Product>;
-  constructor(@InjectRepository(Product) repo: Repository<Product>) {
+export class ReviewsService {
+  repo: Repository<Review>;
+  constructor(@InjectRepository(Review) repo: Repository<Review>) {
     this.repo = repo;
   }
 }

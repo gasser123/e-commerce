@@ -1,10 +1,15 @@
+import { OrderItem } from "src/order-items/order-items.entity";
+import { Review } from "src/reviews/review.entity";
+import { User } from "src/users/user.entity";
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
@@ -27,9 +32,13 @@ export class Product {
   price: number;
   @Column({ default: 0 })
   countInStock: number;
-  //TODO
-  @Column()
-  userId: number;
+
+  @ManyToOne(() => User, (user) => user.products)
+  user: User;
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  orderItems: OrderItem[];
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()
