@@ -1,6 +1,7 @@
 import { OrderItem } from "src/order-items/order-items.entity";
 import { Review } from "src/reviews/review.entity";
 import { User } from "src/users/user.entity";
+import { DecimalColumnTransformer } from "src/util/DecimalColumnTransformer";
 import {
   Column,
   CreateDateColumn,
@@ -28,7 +29,11 @@ export class Product {
   rating: number;
   @Column({ default: 0 })
   numReviews: number;
-  @Column({ default: 0 })
+  @Column("decimal", {
+    precision: 9,
+    scale: 2,
+    transformer: new DecimalColumnTransformer(),
+  })
   price: number;
   @Column({ default: 0 })
   countInStock: number;

@@ -1,10 +1,36 @@
 import ProductDetails from "../components/products/ProductDetails";
-import Product from "../interfaces/product.interface";
-import { useLoaderData } from "react-router-dom";
+import { useGetProductQuery } from "../app/features/productsApiEndpoints";
+import { json, useParams } from "react-router-dom";
+import { isQueryError } from "../util/validate-error-type";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
+import Message from "../components/UI/Message";
 const ProductDetailsPage = () => {
-  const product = useLoaderData() as Product;
+  const params = useParams();
+  const idParam = params.id;
+  if (!idParam) {
+    throw json({ message: "not found" }, { status: 404 });
+  }
+  const id = parseInt(idParam);
+  const { data: product, isLoading, isError, error } = useGetProductQuery(id);
 
-  return <ProductDetails product={product} />;
+  let content = <></>;
+  if (!product) {
+    content = <h2>No product found at the moment</h2>;
+  } else {
+    content = <ProductDetails product={product} />;
+  }
+
+  return (
+    <>
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : isError && isQueryError(error) ? (
+        <Message variant="danger">{`Error ${error.status} ${error.data.message}`}</Message>
+      ) : (
+        content
+      )}
+    </>
+  );
 };
 
 export default ProductDetailsPage;

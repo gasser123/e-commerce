@@ -1,6 +1,6 @@
 import { Row, Col } from "react-bootstrap";
 import Product from "./Product";
-import IProduct from "../../interfaces/product.interface";
+import { Product as IProduct } from "../../schemas/Product.schema";
 interface Props{
 products: IProduct[]; 
 }
