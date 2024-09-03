@@ -1,5 +1,5 @@
 import { Card } from "react-bootstrap";
-import IProduct from "../../interfaces/product.interface";
+import { Product as IProduct } from "../../schemas/Product.schema";
 import { Link } from "react-router-dom";
 import Rating from "../rating/Rating";
 interface Props {

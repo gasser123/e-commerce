@@ -1,8 +1,9 @@
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Container, Badge } from "react-bootstrap";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import logo from "../assets/shop-solid.svg";
 import classes from "./Header.module.css";
 import { LinkContainer } from "react-router-bootstrap";
+import { useAppSelector } from "../app/hook";
 /* 
 When the screen size is below the lg breakpoint, the Navbar.Toggle button will appear. 
 Clicking this button will show or hide the Navbar.Collapse content, providing a responsive navigation experience.
@@ -16,6 +17,7 @@ The value of aria-controls should match the id attribute of the Navbar.Collapse 
 This linkage ensures that when the toggle button is clicked, the correct content is shown or hidden.
 */
 const Header = () => {
+  const { cartItems } = useAppSelector((state) => state.cart);
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="md" collapseOnSelect>
@@ -33,6 +35,11 @@ const Header = () => {
               <LinkContainer to="/cart">
                 <Nav.Link>
                   <FaShoppingCart /> Cart
+                  {cartItems.length > 0 ? (
+                    <Badge pill bg="success" style={{ marginLeft: "5px" }}>
+                      {cartItems.reduce((acc, element) => acc + element.qty, 0)}
+                    </Badge>
+                  ) : null}
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/login">
