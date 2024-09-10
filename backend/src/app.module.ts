@@ -1,4 +1,9 @@
-import { Module, ValidationPipe } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  ValidationPipe,
+} from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ProductsModule } from "./products/products.module";
@@ -9,6 +14,7 @@ import { OrdersModule } from "./orders/orders.module";
 import { OrderItemsModule } from "./order-items/order-items.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { APP_PIPE } from "@nestjs/core";
+import * as cookieParser from "cookie-parser";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -47,4 +53,8 @@ import { APP_PIPE } from "@nestjs/core";
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(cookieParser()).forRoutes("*"); // * indicates that this middleware should be applied to all routes
+  }
+}

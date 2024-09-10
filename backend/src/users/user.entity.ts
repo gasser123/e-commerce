@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Order } from "src/orders/order.entity";
 import { Product } from "src/products/product.entity";
 import { Review } from "src/reviews/review.entity";
@@ -18,6 +19,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Exclude()
   @Column()
   password: string;
 
