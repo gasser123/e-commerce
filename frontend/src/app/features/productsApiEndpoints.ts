@@ -1,5 +1,5 @@
 import { apiSlice } from "./apiSlice";
-import Product from "../../interfaces/product.interface";
+import { Product } from "../../schemas/Product.schema";
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
