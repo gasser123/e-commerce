@@ -3,7 +3,7 @@ import { Product } from "../../schemas/Product.schema";
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
-    // query for GET request while mutation is for other httsp methods
+    // query for GET request while mutation is for other http methods
     // you should supply generics for the return type and the expected query argument: build.query<ReturnType, ArgType>.
     // If there is no argument, use void for the arg type instead
     getProducts: builder.query<Product[], void>({
