@@ -5,6 +5,7 @@ import ProductDetailsPage from "./routes/ProductDetailsPage";
 import ErrorPage from "./routes/ErrorPage";
 import CartPage from "./routes/CartPage";
 import LoginPage from "./routes/LoginPage";
+ import 'react-toastify/dist/ReactToastify.css';
 const router = createBrowserRouter([
   {
     path: "/",

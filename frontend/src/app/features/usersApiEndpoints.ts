@@ -12,6 +12,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url: "/users/login",
         method: "POST",
         body: data,
+        credentials: "include",
       }),
     }),
   }),

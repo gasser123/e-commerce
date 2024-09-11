@@ -8,8 +8,8 @@ export const ReviewSchema = z.object({
   comment: z.string(),
   user: UserInfoSchema,
   product: ProductSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
 export type Review = z.infer<typeof ReviewSchema>;

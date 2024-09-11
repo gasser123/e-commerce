@@ -4,8 +4,8 @@ export const UserInfoSchema = z.object({
     email: z.string().email(),
     name: z.string(),
     isAdmin: z.boolean(),
-    createdAt: z.date(),
-    updatedAt: z.date(),
+    createdAt: z.string().datetime(),
+    updatedAt: z.string().datetime(),
 })
 
 export type UserInfo = z.infer<typeof UserInfoSchema>;

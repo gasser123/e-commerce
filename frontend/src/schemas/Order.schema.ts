@@ -20,12 +20,12 @@ export const OrderSchema = z.object({
   shippingPrice: z.number(),
   totalPrice: z.number(),
   isPaid: z.boolean(),
-  paidAt: z.date(),
+  paidAt: z.string().datetime(),
   isDelivered: z.boolean(),
-  deliveredAt: z.date(),
+  deliveredAt: z.string().datetime(),
   user: UserInfoSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
 });
 
 export type Order = z.infer<typeof OrderSchema>;
