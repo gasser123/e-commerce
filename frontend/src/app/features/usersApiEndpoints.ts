@@ -1,6 +1,7 @@
 import { apiSlice } from "./apiSlice";
 import { UserInfo } from "../../schemas/UserInfo.schema";
 import { LoginInput } from "../../schemas/LoginInput.schema";
+import { RegisterDto } from "../../schemas/RegisterInput.schema";
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
@@ -10,6 +11,14 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     login: builder.mutation<UserInfo, LoginInput>({
       query: (data) => ({
         url: "/users/login",
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+    }),
+    register: builder.mutation<UserInfo, RegisterDto>({
+      query: (data) => ({
+        url: "/users",
         method: "POST",
         body: data,
         credentials: "include",
@@ -25,4 +34,5 @@ export const usersApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation } = usersApiSlice;
+export const { useLoginMutation, useLogoutMutation, useRegisterMutation } =
+  usersApiSlice;
