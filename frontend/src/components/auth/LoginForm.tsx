@@ -11,6 +11,8 @@ import {
   isCustomErrorResponse,
   isFetchBaseQueryError,
 } from "../../util/validate-error-type";
+import { LoginInputSchema } from "../../schemas/LoginInput.schema";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 const LoginForm = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -31,6 +33,21 @@ const LoginForm = () => {
   ) => {
     event.preventDefault();
     try {
+      const { success, error } = LoginInputSchema.safeParse({
+        email,
+        password,
+      });
+      if (!success && error) {
+        const { issues } = error;
+        const customError: FetchBaseQueryError = {
+          status: 422,
+          data: {
+            message: issues.map((issue) => issue.message),
+          },
+        };
+
+        throw customError;
+      }
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials(res));
       navigate(redirect);

@@ -2,15 +2,15 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserInfoSchema, UserInfo } from "../../schemas/UserInfo.schema";
 
 export interface AuthState {
-    userInfo: UserInfo | null
+  userInfo: UserInfo | null;
 }
 
 const storedUserInfo = localStorage.getItem("userInfo");
 const userInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
 const validateUserInfo = UserInfoSchema.safeParse(userInfo).success;
 const initialState: AuthState = {
- userInfo: validateUserInfo ? userInfo : null   
-} 
+  userInfo: validateUserInfo ? userInfo : null,
+};
 
 export const authSlice = createSlice({
   name: "auth",
@@ -18,9 +18,13 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action: PayloadAction<UserInfo>) => {
-     state.userInfo = action.payload;
-     localStorage.setItem("userInfo", JSON.stringify(action.payload));
-    }
+      state.userInfo = action.payload;
+      localStorage.setItem("userInfo", JSON.stringify(action.payload));
+    },
+    logout: (state) => {
+      state.userInfo = null;
+      localStorage.removeItem("userInfo");
+    },
   },
 });
 

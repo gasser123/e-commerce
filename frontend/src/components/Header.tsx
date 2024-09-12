@@ -3,7 +3,15 @@ import { FaShoppingCart, FaUser } from "react-icons/fa";
 import logo from "../assets/shop-solid.svg";
 import classes from "./Header.module.css";
 import { LinkContainer } from "react-router-bootstrap";
-import { useAppSelector } from "../app/hook";
+import { useAppSelector, useAppDispatch } from "../app/hook";
+import { useLogoutMutation } from "../app/features/usersApiEndpoints";
+import authSlice from "../app/features/authSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import {
+  isCustomErrorResponse,
+  isFetchBaseQueryError,
+} from "../util/validate-error-type";
 /* 
 When the screen size is below the lg breakpoint, the Navbar.Toggle button will appear. 
 Clicking this button will show or hide the Navbar.Collapse content, providing a responsive navigation experience.
@@ -19,6 +27,31 @@ This linkage ensures that when the toggle button is clicked, the correct content
 const Header = () => {
   const { cartItems } = useAppSelector((state) => state.cart);
   const { userInfo } = useAppSelector((state) => state.auth);
+  const [signout] = useLogoutMutation();
+  const { logout } = authSlice.actions;
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const logoutHandler: React.MouseEventHandler<HTMLElement> = async (event) => {
+    event.preventDefault();
+    try {
+      await signout().unwrap();
+      dispatch(logout());
+      navigate("/login");
+    } catch (error) {
+      if (isFetchBaseQueryError(error)) {
+        const { data } = error;
+        if (isCustomErrorResponse(data)) {
+          if (typeof data.message === "string") {
+            toast.error(data.message);
+          } else {
+            data.message.forEach((element) => toast.error(element));
+          }
+        }
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  };
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="md" collapseOnSelect>
@@ -48,7 +81,9 @@ const Header = () => {
                   <LinkContainer to="/profile">
                     <NavDropdown.Item>Profile</NavDropdown.Item>
                   </LinkContainer>
-                  <NavDropdown.Item>Logout</NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
                 </NavDropdown>
               ) : (
                 <LinkContainer to="/login">
