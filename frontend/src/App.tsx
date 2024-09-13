@@ -8,6 +8,8 @@ import LoginPage from "./routes/LoginPage";
 import "react-toastify/dist/ReactToastify.css";
 import RegisterPage from "./routes/RegisterPage";
 import ShippingPage from "./routes/ShippingPage";
+import PrivateRoute from "./routes/PrivateRoute";
+import PaymentPage from "./routes/PaymentPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,9 +35,19 @@ const router = createBrowserRouter([
         path: "/register",
         element: <RegisterPage />,
       },
+
       {
-        path: "/shipping",
-        element: <ShippingPage />,
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: "/shipping",
+            element: <ShippingPage />,
+          },
+          {
+            path: "/payment",
+            element: <PaymentPage />,
+          },
+        ],
       },
     ],
     errorElement: <ErrorPage />,

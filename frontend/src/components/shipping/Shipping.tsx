@@ -5,6 +5,10 @@ import ShippingAddress from "../../interfaces/ShippingAddress";
 import { useAppDispatch, useAppSelector } from "../../app/hook";
 import { useNavigate } from "react-router-dom";
 import cartSlice from "../../app/features/cartSlice";
+import { ShippingAddressInputSchema } from "../../schemas/ShippingAddressInput.schema";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { isCustomErrorResponse } from "../../util/validate-error-type";
+import { toast } from "react-toastify";
 const Shipping = () => {
   const { shippingAddress } = useAppSelector((state) => state.cart);
   const [shippingAddressState, setShippingAddressState] =
@@ -19,8 +23,29 @@ const Shipping = () => {
   const navigate = useNavigate();
   const submitHanlder: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    dispatch(saveShippingAddress(shippingAddressState));
-    navigate("/payment");
+    const { success, error } =
+      ShippingAddressInputSchema.safeParse(shippingAddressState);
+    if (success) {
+      dispatch(saveShippingAddress(shippingAddressState));
+      navigate("/payment");
+    } else {
+      const { issues } = error;
+      const customError: FetchBaseQueryError = {
+        status: 422,
+        data: {
+          message: issues.map((issue) => issue.message),
+        },
+      };
+
+      const { data } = customError;
+      if (isCustomErrorResponse(data)) {
+        if (typeof data.message === "string") {
+          toast.error(data.message);
+        } else {
+          data.message.forEach((element) => toast.error(element));
+        }
+      }
+    }
   };
   return (
     <FormContainer>
