@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Cart, CartSchema } from "../../schemas/Cart.schema";
 import { addDecimal } from "../../util/util-functions";
 import { CartItem } from "../../schemas/CartItem.schema";
+import ShippingAddress from "../../interfaces/ShippingAddress";
 // Define a type for the slice state
 
 // Define the initial state using that type
@@ -17,6 +18,14 @@ const initialState: Cart = validateCart
       shippingPrice: 0,
       taxPrice: 0,
       totalPrice: 0,
+      shippingAddress: {
+        address: "",
+        city: "",
+        country: "",
+        postalCode: "",
+      },
+
+      paymentMethod: "PayPal",
     };
 
 export const cartSlice = createSlice({
@@ -60,12 +69,20 @@ export const cartSlice = createSlice({
         state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
       );
       // Calculate shipping price (free for orders over $100 else $10 shipping)
-      state.shippingPrice = addDecimal(state.itemsPrice > 100 ? 0 : 10);
+      state.shippingPrice = addDecimal(
+        state.itemsPrice > 100 || state.cartItems.length === 0 ? 0 : 10
+      );
       // Calculate tax price (15% tax)
       state.taxPrice = addDecimal(state.itemsPrice * 0.15);
       // Calculate total price
       state.totalPrice =
         state.itemsPrice + state.shippingPrice + state.taxPrice;
+
+      localStorage.setItem("cart", JSON.stringify(state));
+    },
+
+    saveShippingAddress: (state, action: PayloadAction<ShippingAddress>) => {
+      state.shippingAddress = action.payload;
       localStorage.setItem("cart", JSON.stringify(state));
     },
   },

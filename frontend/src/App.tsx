@@ -7,6 +7,7 @@ import CartPage from "./routes/CartPage";
 import LoginPage from "./routes/LoginPage";
 import "react-toastify/dist/ReactToastify.css";
 import RegisterPage from "./routes/RegisterPage";
+import ShippingPage from "./routes/ShippingPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <RegisterPage />,
+      },
+      {
+        path: "/shipping",
+        element: <ShippingPage />,
       },
     ],
     errorElement: <ErrorPage />,
