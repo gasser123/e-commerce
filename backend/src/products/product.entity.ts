@@ -25,7 +25,12 @@ export class Product {
   category: string;
   @Column()
   description: string;
-  @Column({ default: 0 })
+  @Column("decimal", {
+    precision: 2,
+    scale: 1,
+    transformer: new DecimalColumnTransformer(),
+    default: 0,
+  })
   rating: number;
   @Column({ default: 0 })
   numReviews: number;
