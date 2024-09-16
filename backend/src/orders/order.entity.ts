@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import ShippingAddress from "./interfaces/ShippingAddress";
-import PaymentResult from "./interfaces/PaymentResult";
+import { ShippingAddress } from "./schemas/ShippingAddress";
+import { PaymentResult } from "./schemas/PaymentResult";
 import { DecimalColumnTransformer } from "src/util/DecimalColumnTransformer";
 @Entity()
 export class Order {

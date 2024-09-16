@@ -14,6 +14,7 @@ import { OrdersModule } from "./orders/orders.module";
 import { OrderItemsModule } from "./order-items/order-items.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { APP_PIPE } from "@nestjs/core";
+import { AuthModule } from './auth/auth.module';
 import * as cookieParser from "cookie-parser";
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import * as cookieParser from "cookie-parser";
     UsersModule,
     OrdersModule,
     OrderItemsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
