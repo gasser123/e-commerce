@@ -104,27 +104,48 @@ const AppDataSource = new DataSource({
   migrations: ["migrations/*.js"],
 });
 
-AppDataSource.initialize()
-  .then(async () => {
-    console.log("Data Source has been initialized!");
-    const hash = bcrypt.hashSync(
-      "Peter123" + BCRYPT_PASSWORD,
-      Number(SALT_ROUNDS),
-    );
-    sampleUserInfo.password = hash;
-    const userRepository = AppDataSource.getRepository(User);
-    const productRepository = AppDataSource.getRepository(Product);
-    const sampleUserInstance = userRepository.create(sampleUserInfo);
-    const sampleUser = await userRepository.save(sampleUserInstance);
+async function seedData() {
+  await AppDataSource.initialize();
+  console.log("Data Source has been initialized!");
+  const hash = bcrypt.hashSync(
+    "Peter123" + BCRYPT_PASSWORD,
+    Number(SALT_ROUNDS),
+  );
+  sampleUserInfo.password = hash;
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+  try {
+    const sampleUserInstance = queryRunner.manager.create(User, sampleUserInfo);
+    const sampleUser = await queryRunner.manager.save(sampleUserInstance);
     const sampleProducts: Partial<Product>[] = sampleProductsInfo.map(
       (productInfo) => ({ ...productInfo, user: sampleUser }),
     );
-    sampleProducts.forEach(async (productInfo) => {
-      const sampleProductInstance = productRepository.create(productInfo);
-      await productRepository.save(sampleProductInstance);
-    });
+
+    for (const productInfo of sampleProducts) {
+      const sampleProductInstance = queryRunner.manager.create(
+        Product,
+        productInfo,
+      );
+      await queryRunner.manager.save(sampleProductInstance);
+    }
+
+    await queryRunner.commitTransaction();
+  } catch (err) {
+    console.error("transaction failed " + err);
+    // since we have errors lets rollback the changes we made
+    await queryRunner.rollbackTransaction();
+  } finally {
+    // you need to release a queryRunner which was manually instantiated
+    await queryRunner.release();
+  }
+}
+
+seedData()
+  .then(() => {
+    console.log("seeding done successfully");
+    process.exit();
   })
   .catch((err) => {
-    console.error("Error during Data Source initialization", err);
-    process.exit(1);
+    console.error("seeding failed " + err);
   });

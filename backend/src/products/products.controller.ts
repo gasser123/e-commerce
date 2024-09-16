@@ -5,20 +5,17 @@ import {
   Param,
   ParseIntPipe,
 } from "@nestjs/common";
-import products from "./products";
+import { ProductsService } from "./products.service";
 @Controller("products")
 export class ProductsController {
+  constructor(private productsService: ProductsService) {}
   @Get()
   getProducts() {
-    return products;
+    return this.productsService.findAll();
   }
 
   @Get("/:id")
   getProduct(@Param("id", ParseIntPipe) id: number) {
-    const product = products.find((p) => p.id === id);
-    if (!product) {
-      throw new NotFoundException("Product not found");
-    }
-    return product;
+    return this.productsService.findOneBy({ id });
   }
 }
