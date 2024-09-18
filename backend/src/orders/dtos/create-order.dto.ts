@@ -1,6 +1,7 @@
 import {
   ArrayMinSize,
   IsArray,
+  IsNotEmpty,
   IsNumber,
   IsObject,
   IsString,
@@ -8,14 +9,19 @@ import {
 } from "class-validator";
 import { OrderItemDto } from "./orderItem.dto";
 import { ShippingAddressDto } from "./ShippingAddress.dto";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 
 export class CreateOrderDto {
   @ValidateNested()
   @Type(() => ShippingAddressDto)
   shippingAddress: ShippingAddressDto;
 
+  @IsNotEmpty()
   @IsString()
+  @Transform(
+    ({ value }) => (typeof value === "string" ? value.trim() : value),
+    { toClassOnly: true },
+  )
   paymentMethod: string;
 
   @IsNumber()

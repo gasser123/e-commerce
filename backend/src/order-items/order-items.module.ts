@@ -5,5 +5,6 @@ import { OrderItem } from "./order-items.entity";
 @Module({
   providers: [OrderItemsService],
   imports: [TypeOrmModule.forFeature([OrderItem])],
+  exports: [OrderItemsService],
 })
 export class OrderItemsModule {}

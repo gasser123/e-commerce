@@ -1,36 +1,64 @@
-import { IsNumber, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator";
 
 export class OrderItemDto {
+  @IsPositive()
   @IsNumber()
   qty: number;
 
+  // this is product id
   @IsNumber()
   id: number;
 
-  @IsString()
-  name: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // @Transform(
+  //   ({ value }) => (typeof value === "string" ? value.trim() : value),
+  //   { toClassOnly: true },
+  // )
+  // name: string;
 
-  @IsString()
-  image: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // @Transform(
+  //   ({ value }) => (typeof value === "string" ? value.trim() : value),
+  //   { toClassOnly: true },
+  // )
+  // image: string;
 
-  @IsString()
-  description: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // @Transform(
+  //   ({ value }) => (typeof value === "string" ? value.trim() : value),
+  //   { toClassOnly: true },
+  // )
+  // description: string;
 
-  @IsString()
-  brand: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // @Transform(
+  //   ({ value }) => (typeof value === "string" ? value.trim() : value),
+  //   { toClassOnly: true },
+  // )
+  // brand: string;
 
-  @IsString()
-  category: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // @Transform(
+  //   ({ value }) => (typeof value === "string" ? value.trim() : value),
+  //   { toClassOnly: true },
+  // )
+  // category: string;
 
-  @IsNumber()
-  price: number;
+  // @IsNumber()
+  // price: number;
 
-  @IsNumber()
-  countInStock: number;
+  // @IsNumber()
+  // countInStock: number;
 
-  @IsNumber()
-  rating: number;
+  // @IsNumber()
+  // rating: number;
 
-  @IsNumber()
-  numReviews: number;
+  // @IsNumber()
+  // numReviews: number;
 }
