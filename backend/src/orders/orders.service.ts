@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Order } from "./order.entity";
@@ -20,7 +24,8 @@ export class OrdersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const orderItems: OrderItem[] = [];
+      const orderInstance = queryRunner.manager.create(Order, orderInfo);
+      const order = await queryRunner.manager.save(orderInstance);
       for (const orderItemInfo of orderItemsInfo) {
         const orderItemInstance = queryRunner.manager.create(
           OrderItem,
@@ -41,13 +46,10 @@ export class OrdersService {
         product.countInStock = product.countInStock - orderItemInstance.qty;
         await queryRunner.manager.save(product);
         orderItemInstance.product = product;
-        const orderItem = await queryRunner.manager.save(orderItemInstance);
-        orderItems.push(orderItem);
+        orderItemInstance.order = order;
+        await queryRunner.manager.save(orderItemInstance);
       }
 
-      const orderInstance = queryRunner.manager.create(Order, orderInfo);
-      orderInstance.orderItems = orderItems;
-      const order = await queryRunner.manager.save(orderInstance);
       await queryRunner.commitTransaction();
 
       return order;
@@ -65,5 +67,11 @@ export class OrdersService {
 
   findOneBy(orderInfo: Partial<Order>) {
     return this.repo.findOneBy(orderInfo);
+  }
+
+  findUserOrders(orderInfo: Partial<Order>) {
+    return this.repo.find({
+      where: { user: { id: orderInfo.user?.id } },
+    });
   }
 }

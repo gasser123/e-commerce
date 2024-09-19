@@ -1,6 +1,7 @@
 import { OrderItem } from "src/order-items/order-items.entity";
 import { User } from "src/users/user.entity";
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -13,6 +14,10 @@ import { ShippingAddress } from "./schemas/ShippingAddress";
 import { PaymentResult } from "./schemas/PaymentResult";
 import { DecimalColumnTransformer } from "src/util/DecimalColumnTransformer";
 @Entity()
+@Check(`"itemsPrice" >= 0`)
+@Check(`"taxPrice" >= 0`)
+@Check(`"shippingPrice" >= 0`)
+@Check(`"totalPrice" >= 0`)
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
@@ -25,7 +30,7 @@ export class Order {
   @Column()
   paymentMethod: string;
 
-  @Column({ type: "jsonb" })
+  @Column({ type: "jsonb", nullable: true })
   paymentResult: PaymentResult;
 
   @Column("decimal", {
@@ -59,13 +64,13 @@ export class Order {
   isPaid: boolean;
   // TIMESTAMP values are stored relative to the time zone of the server, whereas TIMESTAMPTZ are stored relative to UTC
   // TIMESTAMP and TIMESTAMPTZ are returned as Date while DATE type is returned as string
-  @Column({ type: "timestamptz" })
+  @Column({ type: "timestamptz", nullable: true })
   paidAt: Date;
   @Column({ default: false })
   isDelivered: boolean;
-  @Column({ type: "timestamptz" })
+  @Column({ type: "timestamptz", nullable: true })
   deliveredAt: Date;
-  @ManyToOne(() => User, (user) => user.orders)
+  @ManyToOne(() => User, (user) => user.orders, { nullable: false })
   user: User;
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   orderItems: OrderItem[];

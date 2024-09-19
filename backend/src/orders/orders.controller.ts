@@ -36,7 +36,7 @@ export class OrdersController {
   @Get("/myorders")
   @UseGuards(AuthGuard)
   getMyOrders(@CurrentUser() user: User) {
-    return this.ordersService.findBy({ user });
+    return this.ordersService.findUserOrders({ user });
   }
 
   @Get("/:id")

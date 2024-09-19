@@ -5,9 +5,10 @@ import {
   IsNumber,
   IsObject,
   IsString,
+  Min,
   ValidateNested,
 } from "class-validator";
-import { OrderItemDto } from "./orderItem.dto";
+import { CartItemDto } from "./cartItem.dto";
 import { ShippingAddressDto } from "./ShippingAddress.dto";
 import { Transform, Type } from "class-transformer";
 
@@ -24,15 +25,19 @@ export class CreateOrderDto {
   )
   paymentMethod: string;
 
+  @Min(0)
   @IsNumber()
   itemsPrice: number;
 
+  @Min(0)
   @IsNumber()
   taxPrice: number;
 
+  @Min(0)
   @IsNumber()
   shippingPrice: number;
 
+  @Min(0)
   @IsNumber()
   totalPrice: number;
 
@@ -40,6 +45,6 @@ export class CreateOrderDto {
   @IsObject({ each: true })
   @ArrayMinSize(1)
   @IsArray()
-  @Type(() => OrderItemDto)
-  orderItems: OrderItemDto[];
+  @Type(() => CartItemDto)
+  cartItems: CartItemDto[];
 }

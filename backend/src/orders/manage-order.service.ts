@@ -16,7 +16,7 @@ export class ManageOrderService {
 
   async prepareOrder(createOrderDto: CreateOrderDto, user: User) {
     const orderItemsInfo = await Promise.all(
-      createOrderDto.orderItems.map(
+      createOrderDto.cartItems.map(
         async (item): Promise<Pick<OrderItem, "qty" | "product">> => {
           const product = await this.productsService.findOneBy({ id: item.id });
           if (!product) {

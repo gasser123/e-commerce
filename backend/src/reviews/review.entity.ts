@@ -1,6 +1,7 @@
 import { Product } from "src/products/product.entity";
 import { User } from "src/users/user.entity";
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,6 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 @Entity()
+@Check(`"rating" >= 0`)
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,10 +23,10 @@ export class Review {
   @Column()
   comment: string;
 
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews, { nullable: false })
   user: User;
 
-  @ManyToOne(() => Product, (product) => product.reviews)
+  @ManyToOne(() => Product, (product) => product.reviews, { nullable: false })
   product: Product;
 
   @CreateDateColumn()
