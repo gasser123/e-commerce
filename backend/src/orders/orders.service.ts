@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -9,6 +10,7 @@ import { Order } from "./order.entity";
 import { OrderItem } from "src/order-items/order-items.entity";
 import { DataSource } from "typeorm";
 import { Product } from "src/products/product.entity";
+import { PaymentResult } from "./schemas/PaymentResult";
 @Injectable()
 export class OrdersService {
   constructor(
@@ -85,5 +87,20 @@ export class OrdersService {
         user: true,
       },
     });
+  }
+
+  async updateOrderToPaid(id: number, paymentResult: PaymentResult) {
+    const order = await this.findOneBy({ id });
+    if (!order) {
+      throw new NotFoundException("order not found");
+    }
+
+    order.isPaid = true;
+    order.paidAt = new Date();
+    order.paymentResult = {
+      ...paymentResult,
+    };
+
+    return this.repo.save(order);
   }
 }

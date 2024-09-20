@@ -18,6 +18,8 @@ import { CurrentUser } from "src/decorators/current-user.decorator";
 import { User } from "src/users/user.entity";
 import { ManageOrderService } from "./manage-order.service";
 import { OrdersService } from "./orders.service";
+import { PaymentResultDto } from "./dtos/PaymentResult.dto";
+import { PaymentResult } from "./schemas/PaymentResult";
 
 @Controller("orders")
 export class OrdersController {
@@ -55,8 +57,17 @@ export class OrdersController {
 
   @Patch("/:id/pay")
   @UseGuards(AuthGuard)
-  updateOrderToPaid(@Param("id", ParseIntPipe) id: number) {
-    return `update order with id ${id} to paid`;
+  updateOrderToPaid(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() paymentResultDto: PaymentResultDto,
+  ) {
+    const paymentResult: PaymentResult = {
+      id: paymentResultDto.id,
+      email_address: paymentResultDto.payer.email_address,
+      status: paymentResultDto.status,
+      update_time: paymentResultDto.update_time,
+    };
+    return this.ordersService.updateOrderToPaid(id, paymentResult);
   }
 
   @Patch("/:id/deliver")

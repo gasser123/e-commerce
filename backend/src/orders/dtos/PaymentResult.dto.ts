@@ -1,4 +1,6 @@
-import { IsEmail, IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString, ValidateNested } from "class-validator";
+import { PayerDto } from "./payer.dto";
+import { Type } from "class-transformer";
 
 export class PaymentResultDto {
   @IsNumber()
@@ -9,7 +11,7 @@ export class PaymentResultDto {
 
   @IsString()
   update_time: string;
-
-  @IsEmail()
-  email_address: string;
+  @ValidateNested()
+  @Type(() => PayerDto)
+  payer: PayerDto;
 }
