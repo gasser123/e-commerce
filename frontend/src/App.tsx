@@ -11,6 +11,8 @@ import ShippingPage from "./routes/ShippingPage";
 import PrivateRoute from "./routes/PrivateRoute";
 import PaymentPage from "./routes/PaymentPage";
 import PlaceOrderPage from "./routes/PlaceOrderPage";
+import AdminRoute from "./routes/AdminRoute";
+import OrderPage from "./routes/OrderPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,6 +53,16 @@ const router = createBrowserRouter([
           {
             path: "/placeorder",
             element: <PlaceOrderPage />,
+          },
+        ],
+      },
+
+      {
+        element: <AdminRoute />,
+        children: [
+          {
+            path: "/orders/:id",
+            element: <OrderPage />,
           },
         ],
       },

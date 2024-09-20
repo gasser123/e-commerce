@@ -74,4 +74,16 @@ export class OrdersService {
       where: { user: { id: orderInfo.user?.id } },
     });
   }
+
+  findOneByWithRelations(orderInfo: Partial<Order>) {
+    return this.repo.findOne({
+      where: orderInfo,
+      relations: {
+        orderItems: {
+          product: true,
+        },
+        user: true,
+      },
+    });
+  }
 }

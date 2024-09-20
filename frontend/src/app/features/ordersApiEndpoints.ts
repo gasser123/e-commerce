@@ -1,6 +1,7 @@
 import { apiSlice } from "./apiSlice";
 import { Order } from "../../schemas/Order.schema";
 import { Cart } from "../../schemas/Cart.schema";
+import { OrderJoins } from "../../schemas/OrderJoins.schema";
 export const ordersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createOrder: builder.mutation<Order, Cart>({
@@ -16,7 +17,12 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 
       keepUnusedDataFor: 5,
     }),
+    getOrderDetails: builder.query<OrderJoins, number>({
+      query: (id) => ({ url: `/orders/${id}`, credentials: "include" }),
+
+      keepUnusedDataFor: 5,
+    }),
   }),
 });
 
-export const { useCreateOrderMutation, useGetMyOrdersQuery } = ordersApiSlice;
+export const { useCreateOrderMutation, useGetMyOrdersQuery, useGetOrderDetailsQuery } = ordersApiSlice;

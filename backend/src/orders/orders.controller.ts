@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   NotFoundException,
@@ -8,6 +9,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { AdminGuard } from "src/auth/guards/admin.guard";
 import { AuthGuard } from "src/auth/guards/auth.guard";
@@ -40,9 +42,10 @@ export class OrdersController {
   }
 
   @Get("/:id")
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(AuthGuard, AdminGuard)
   async getOrderById(@Param("id", ParseIntPipe) id: number) {
-    const order = await this.ordersService.findOneBy({ id });
+    const order = await this.ordersService.findOneByWithRelations({ id });
     if (!order) {
       throw new NotFoundException("order not found");
     }
