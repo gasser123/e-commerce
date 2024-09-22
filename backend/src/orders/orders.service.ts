@@ -89,6 +89,21 @@ export class OrdersService {
     });
   }
 
+  async findOrderUser(orderInfo: Partial<Order>) {
+    const order = await this.repo.findOne({
+      where: orderInfo,
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException("order not found");
+    }
+
+    return order.user;
+  }
+
   async updateOrderToPaid(id: number, paymentResult: PaymentResult) {
     const order = await this.findOneBy({ id });
     if (!order) {

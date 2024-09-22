@@ -48,9 +48,9 @@ const PlaceOrder = () => {
     HTMLButtonElement
   > = async () => {
     try {
-      await createOrder(cart).unwrap();
+      const order = await createOrder(cart).unwrap();
       dispatch(clearCartItems());
-      navigate("/myorders");
+      navigate(`/orders/${order.id}`);
     } catch (error) {
       if (isFetchBaseQueryError(error)) {
         const { data } = error;

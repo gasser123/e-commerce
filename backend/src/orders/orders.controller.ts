@@ -20,6 +20,7 @@ import { ManageOrderService } from "./manage-order.service";
 import { OrdersService } from "./orders.service";
 import { PaymentResultDto } from "./dtos/PaymentResult.dto";
 import { PaymentResult } from "./schemas/PaymentResult";
+import { ViewOrderGuard } from "./guards/view-order.guard";
 
 @Controller("orders")
 export class OrdersController {
@@ -45,7 +46,7 @@ export class OrdersController {
 
   @Get("/:id")
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard, ViewOrderGuard)
   async getOrderById(@Param("id", ParseIntPipe) id: number) {
     const order = await this.ordersService.findOneByWithRelations({ id });
     if (!order) {

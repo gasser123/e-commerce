@@ -13,6 +13,10 @@ import PaymentPage from "./routes/PaymentPage";
 import PlaceOrderPage from "./routes/PlaceOrderPage";
 import AdminRoute from "./routes/AdminRoute";
 import OrderPage from "./routes/OrderPage";
+import {
+  PayPalScriptProvider,
+  ReactPayPalScriptOptions,
+} from "@paypal/react-paypal-js";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -54,24 +58,32 @@ const router = createBrowserRouter([
             path: "/placeorder",
             element: <PlaceOrderPage />,
           },
-        ],
-      },
-
-      {
-        element: <AdminRoute />,
-        children: [
           {
             path: "/orders/:id",
             element: <OrderPage />,
           },
         ],
       },
+
+      {
+        element: <AdminRoute />,
+        children: [],
+      },
     ],
     errorElement: <ErrorPage />,
   },
 ]);
 function App() {
-  return <RouterProvider router={router} />;
+  const initialPayPalOptions: ReactPayPalScriptOptions = {
+    clientId: "test",
+    currency: "USD",
+    intent: "capture",
+  };
+  return (
+    <PayPalScriptProvider deferLoading={true} options={initialPayPalOptions}>
+      <RouterProvider router={router} />
+    </PayPalScriptProvider>
+  );
 }
 
 export default App;

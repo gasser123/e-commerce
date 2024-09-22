@@ -11,14 +11,14 @@ const OrderPage = () => {
     throw json({ message: "not found" }, { status: 404 });
   }
   const id = parseInt(idParam);
-  const { data: order, isLoading, error } = useGetOrderDetailsQuery(id);
+  const { data: order, isLoading, error, refetch } = useGetOrderDetailsQuery(id);
 
   return isLoading ? (
     <LoadingSpinner />
   ) : error && isQueryError(error) ? (
     <Message variant="danger">{`Error ${error.status} ${error.data.message}`}</Message>
   ) : order ? (
-    <Order order={order} />
+    <Order order={order} refetch={refetch} />
   ) : null;
 };
 

@@ -1,10 +1,10 @@
-import { IsNumber, IsString, ValidateNested } from "class-validator";
+import { IsString, ValidateNested } from "class-validator";
 import { PayerDto } from "./payer.dto";
 import { Type } from "class-transformer";
 
 export class PaymentResultDto {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 
   @IsString()
   status: string;

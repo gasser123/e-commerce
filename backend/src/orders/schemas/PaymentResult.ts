@@ -1,9 +1,6 @@
 export class PaymentResult {
-  id: number;
-
+  id: string;
   status: string;
-
   update_time: string;
-
   email_address: string;
 }
