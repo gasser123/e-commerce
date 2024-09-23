@@ -2,6 +2,7 @@ import { apiSlice } from "./apiSlice";
 import { UserInfo } from "../../schemas/UserInfo.schema";
 import { LoginInput } from "../../schemas/LoginInput.schema";
 import { RegisterDto } from "../../schemas/RegisterInput.schema";
+import { UpdateProfileDto } from "../../schemas/UpdateProfileDto.schema";
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
@@ -31,8 +32,21 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+
+    updateProfile: builder.mutation<UserInfo, UpdateProfileDto>({
+      query: (data) => ({
+        url: "/users/profile",
+        method: "PATCH",
+        body: data,
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation } =
-  usersApiSlice;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useRegisterMutation,
+  useUpdateProfileMutation,
+} = usersApiSlice;

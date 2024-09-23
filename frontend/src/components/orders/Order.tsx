@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
+import { Row, Col, ListGroup, Image, Card } from "react-bootstrap";
+// import {Button} from "react-bootstrap";
 import Message from "../UI/Message";
 import { OrderJoins } from "../../schemas/OrderJoins.schema";
 import {
@@ -15,7 +16,6 @@ import {
   useGetPayPalClientIdQuery,
 } from "../../app/features/ordersApiEndpoints";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../../app/hook";
 import { useEffect } from "react";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { PaymentResultDto } from "../../schemas/PaymentResult.dto.schema";
@@ -37,35 +37,34 @@ const Order: React.FC<Props> = (props) => {
     error: errorPayPalClient,
   } = useGetPayPalClientIdQuery();
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-  const { userInfo } = useAppSelector((state) => state.auth);
-  const onApproveTestHandler: React.MouseEventHandler<
-    HTMLButtonElement
-  > = async () => {
-    try {
-      const paymentResult: PaymentResultDto = {
-        id: "test",
-        payer: { email_address: "test@gmail.com" },
-        status: "test",
-        update_time: "test",
-      };
-      await payOrder({ id: order.id, data: paymentResult });
-      refetch();
-      toast.success("Payment successful");
-    } catch (error) {
-      if (isFetchBaseQueryError(error)) {
-        const { data } = error;
-        if (isCustomErrorResponse(data)) {
-          if (typeof data.message === "string") {
-            toast.error(data.message);
-          } else {
-            data.message.forEach((element) => toast.error(element));
-          }
-        }
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  };
+  // const onApproveTestHandler: React.MouseEventHandler<
+  //   HTMLButtonElement
+  // > = async () => {
+  //   try {
+  //     const paymentResult: PaymentResultDto = {
+  //       id: "test",
+  //       payer: { email_address: "test@gmail.com" },
+  //       status: "test",
+  //       update_time: "test",
+  //     };
+  //     await payOrder({ id: order.id, data: paymentResult });
+  //     refetch();
+  //     toast.success("Payment successful");
+  //   } catch (error) {
+  //     if (isFetchBaseQueryError(error)) {
+  //       const { data } = error;
+  //       if (isCustomErrorResponse(data)) {
+  //         if (typeof data.message === "string") {
+  //           toast.error(data.message);
+  //         } else {
+  //           data.message.forEach((element) => toast.error(element));
+  //         }
+  //       }
+  //     } else if (error instanceof Error) {
+  //       toast.error(error.message);
+  //     }
+  //   }
+  // };
   const onApproveHandler: PayPalButtonsComponentProps["onApprove"] = async (
     _data,
     actions
@@ -256,12 +255,12 @@ const Order: React.FC<Props> = (props) => {
                     <LoadingSpinner />
                   ) : (
                     <div>
-                      <Button
+                      {/*<Button
                         style={{ marginBottom: "10px" }}
                         onClick={onApproveTestHandler}
                       >
                         Test Pay Order
-                      </Button>
+                      </Button>*/}
                       <div>
                         <PayPalButtons
                           createOrder={createOrderHandler}
