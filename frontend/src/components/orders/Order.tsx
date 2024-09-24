@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Row, Col, ListGroup, Image, Card } from "react-bootstrap";
+import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
 // import {Button} from "react-bootstrap";
 import Message from "../UI/Message";
 import { OrderJoins } from "../../schemas/OrderJoins.schema";
@@ -14,6 +14,7 @@ import {
 import {
   usePayOrderMutation,
   useGetPayPalClientIdQuery,
+  useDeliverOrderMutation,
 } from "../../app/features/ordersApiEndpoints";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
@@ -23,6 +24,7 @@ import {
   isCustomErrorResponse,
   isFetchBaseQueryError,
 } from "../../util/validate-error-type";
+import { useAppSelector } from "../../app/hook";
 interface Props {
   order: OrderJoins;
   refetch: () => unknown;
@@ -37,6 +39,31 @@ const Order: React.FC<Props> = (props) => {
     error: errorPayPalClient,
   } = useGetPayPalClientIdQuery();
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const [deliverOrder, { isLoading: loadingDeliver }] =
+    useDeliverOrderMutation();
+  const { userInfo } = useAppSelector((state) => state.auth);
+  const deliverOrderHandler: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async () => {
+    try {
+      await deliverOrder(order.id).unwrap();
+      refetch();
+      toast.success("Order delivered");
+    } catch (error) {
+      if (isFetchBaseQueryError(error)) {
+        const { data } = error;
+        if (isCustomErrorResponse(data)) {
+          if (typeof data.message === "string") {
+            toast.error(data.message);
+          } else {
+            data.message.forEach((element) => toast.error(element));
+          }
+        }
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  };
   // const onApproveTestHandler: React.MouseEventHandler<
   //   HTMLButtonElement
   // > = async () => {
@@ -272,7 +299,21 @@ const Order: React.FC<Props> = (props) => {
                   )}
                 </ListGroup.Item>
               )}
-              {/* mark as delivered placeholder */}
+              {loadingDeliver ? <LoadingSpinner /> : null}
+              {userInfo &&
+              userInfo.isAdmin &&
+              order.isPaid &&
+              !order.isDelivered ? (
+                <ListGroup.Item>
+                  <Button
+                    type="button"
+                    className="btn btn-block"
+                    onClick={deliverOrderHandler}
+                  >
+                    Mark As Delivered
+                  </Button>
+                </ListGroup.Item>
+              ) : null}
             </ListGroup>
           </Card>
         </Col>

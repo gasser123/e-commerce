@@ -34,6 +34,18 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
     getPayPalClientId: builder.query<{ clientId: string }, void>({
       query: () => ({ url: "/paypal-config" }),
     }),
+    getAllOrders: builder.query<OrderJoins[], void>({
+      query: () => ({ url: "/orders", credentials: "include" }),
+      keepUnusedDataFor: 5,
+    }),
+
+    deliverOrder: builder.mutation<Order, number>({
+      query: (id) => ({
+        url: `/orders/${id}/deliver`,
+        method: "PATCH",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -43,4 +55,6 @@ export const {
   useGetOrderDetailsQuery,
   usePayOrderMutation,
   useGetPayPalClientIdQuery,
+  useGetAllOrdersQuery,
+  useDeliverOrderMutation,
 } = ordersApiSlice;

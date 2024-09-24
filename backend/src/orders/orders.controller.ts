@@ -74,12 +74,13 @@ export class OrdersController {
   @Patch("/:id/deliver")
   @UseGuards(AuthGuard, AdminGuard)
   updateOrderToDelivered(@Param("id", ParseIntPipe) id: number) {
-    return `update order with id ${id} to delivered`;
+    return this.ordersService.updateOrderToDelivered(id);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   @UseGuards(AuthGuard, AdminGuard)
   getAllOrders() {
-    return "get all orders";
+    return this.ordersService.findAllWithUsers();
   }
 }

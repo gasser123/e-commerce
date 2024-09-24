@@ -67,6 +67,10 @@ export class OrdersService {
     return this.repo.findBy(orderInfo);
   }
 
+  findAllWithUsers() {
+    return this.repo.find({ relations: { user: true } });
+  }
+
   findOneBy(orderInfo: Partial<Order>) {
     return this.repo.findOneBy(orderInfo);
   }
@@ -110,11 +114,32 @@ export class OrdersService {
       throw new NotFoundException("order not found");
     }
 
+    if (order.isPaid) {
+      throw new BadRequestException("order is already paid");
+    }
     order.isPaid = true;
     order.paidAt = new Date();
     order.paymentResult = {
       ...paymentResult,
     };
+
+    return this.repo.save(order);
+  }
+
+  async updateOrderToDelivered(id: number) {
+    const order = await this.findOneBy({ id });
+    if (!order) {
+      throw new NotFoundException("order not found");
+    }
+
+    if (!order.isPaid) {
+      throw new BadRequestException("order is not paid");
+    }
+    if (order.isDelivered) {
+      throw new BadRequestException("order is already delivered");
+    }
+    order.isDelivered = true;
+    order.deliveredAt = new Date();
 
     return this.repo.save(order);
   }
