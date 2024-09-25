@@ -24,6 +24,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["User"],
     }),
     logout: builder.mutation<void, void>({
       query: () => ({
@@ -40,6 +41,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["User"],
     }),
   }),
 });

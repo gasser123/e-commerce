@@ -12,15 +12,16 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Order"],
     }),
     getMyOrders: builder.query<Order[], void>({
       query: () => ({ url: "/orders/myorders", credentials: "include" }),
-
+      providesTags: ["Order"],
       keepUnusedDataFor: 5,
     }),
     getOrderDetails: builder.query<OrderJoins, number>({
       query: (id) => ({ url: `/orders/${id}`, credentials: "include" }),
-
+      providesTags: (_result, _error, arg) => [{ type: "Order", id: arg }],
       keepUnusedDataFor: 5,
     }),
     payOrder: builder.mutation<Order, { id: number; data: PaymentResultDto }>({
@@ -30,12 +31,14 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Order"],
     }),
     getPayPalClientId: builder.query<{ clientId: string }, void>({
       query: () => ({ url: "/paypal-config" }),
     }),
     getAllOrders: builder.query<OrderJoins[], void>({
       query: () => ({ url: "/orders", credentials: "include" }),
+      providesTags: ["Order"],
       keepUnusedDataFor: 5,
     }),
 
@@ -45,6 +48,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
         credentials: "include",
       }),
+      invalidatesTags: ["Order"],
     }),
   }),
 });

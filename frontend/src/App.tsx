@@ -19,6 +19,7 @@ import {
 } from "@paypal/react-paypal-js";
 import ProfilePage from "./routes/ProfilePage";
 import AdminOrdersListPage from "./routes/AdminOrdersListPage";
+import AdminProductsListPage from "./routes/AdminProductsListPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
           {
             path: "/admin/orders",
             element: <AdminOrdersListPage />,
+          },
+          {
+            path: "/admin/products",
+            element: <AdminProductsListPage />,
           },
         ],
       },
