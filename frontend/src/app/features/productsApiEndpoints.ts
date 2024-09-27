@@ -1,5 +1,6 @@
 import { apiSlice } from "./apiSlice";
 import { Product } from "../../schemas/Product.schema";
+import { UpdateProductDto } from "../../schemas/UpdateProductDto.schema";
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
@@ -20,7 +21,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       providesTags: (_result, _error, arg) => [{ type: "Product", id: arg }],
     }),
 
-    createProduct: builder.mutation<Product, Product>({
+    createProduct: builder.mutation<Product, FormData>({
       query: (data) => ({
         url: "/products",
         method: "POST",
@@ -29,7 +30,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Product"],
     }),
-    updateProduct: builder.mutation<Product, Product>({
+    updateProduct: builder.mutation<Product, UpdateProductDto>({
       query: (data) => ({
         url: `/products/${data.id}`,
         method: "PATCH",

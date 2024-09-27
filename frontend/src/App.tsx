@@ -20,6 +20,8 @@ import {
 import ProfilePage from "./routes/ProfilePage";
 import AdminOrdersListPage from "./routes/AdminOrdersListPage";
 import AdminProductsListPage from "./routes/AdminProductsListPage";
+import AdminCreateProductPage from "./routes/AdminCreateProductPage";
+import AdminEditProductPage from "./routes/AdminEditProductPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -81,7 +83,20 @@ const router = createBrowserRouter([
           },
           {
             path: "/admin/products",
-            element: <AdminProductsListPage />,
+            children: [
+              {
+                index: true,
+                element: <AdminProductsListPage />,
+              },
+              {
+                path: "create",
+                element: <AdminCreateProductPage />,
+              },
+              {
+                path: ":id/edit",
+                element: <AdminEditProductPage />,
+              },
+            ],
           },
         ],
       },

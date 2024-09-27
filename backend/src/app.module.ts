@@ -15,8 +15,10 @@ import { OrderItemsModule } from "./order-items/order-items.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { APP_PIPE } from "@nestjs/core";
 import { AuthModule } from "./auth/auth.module";
-import { PaypalConfigModule } from './paypal-config/paypal-config.module';
+import { PaypalConfigModule } from "./paypal-config/paypal-config.module";
 import * as cookieParser from "cookie-parser";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import * as path from "path";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -45,6 +47,11 @@ import * as cookieParser from "cookie-parser";
     OrderItemsModule,
     AuthModule,
     PaypalConfigModule,
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, "..", "uploads"),
+      serveRoot: "/uploads/",
+      serveStaticOptions: { index: false },
+    }),
   ],
   controllers: [AppController],
   providers: [
