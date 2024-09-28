@@ -23,11 +23,8 @@ export function isFetchErrorResponse(
     value &&
     typeof value === "object" &&
     "message" in value &&
-    "error" in value &&
-    "statusCode" in value &&
-    typeof value.message === "string" &&
-    (typeof value.error === "string" || value.error === undefined) &&
-    typeof value.statusCode === "number"
+    ("error" in value || "statusCode" in value) &&
+    typeof value.message === "string"
   ) {
     return true;
   }
@@ -87,5 +84,5 @@ export function isCustomQueryError(value: unknown): value is QueryError {
 export function isFetchBaseQueryError(
   error: unknown
 ): error is FetchBaseQueryError {
-  return typeof error === 'object' && error != null && 'status' in error
+  return typeof error === "object" && error != null && "status" in error;
 }

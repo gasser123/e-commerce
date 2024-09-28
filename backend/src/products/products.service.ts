@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Product } from "./product.entity";
+import { removeImage } from "src/util/removeImage";
 @Injectable()
 export class ProductsService {
   repo: Repository<Product>;
@@ -28,8 +29,13 @@ export class ProductsService {
       throw new NotFoundException("product not found");
     }
 
-    Object.assign(product, productInfo);
+    if (productInfo.image) {
+      const arr = product.image.split("uploads");
+      const imagePath = "uploads" + arr[arr.length - 1];
+      await removeImage(imagePath);
+    }
 
+    Object.assign(product, productInfo);
     return this.repo.save(product);
   }
 }

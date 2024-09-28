@@ -31,6 +31,7 @@ const AdminEditProduct: React.FC<Props> = (props) => {
     description: product.description,
     price: `${product.price}`,
   });
+  const [image, setImage] = useState<File | null>(null);
   const navigate = useNavigate();
   const submitHandler: React.FormEventHandler<HTMLFormElement> = async (
     event
@@ -55,7 +56,24 @@ const AdminEditProduct: React.FC<Props> = (props) => {
 
         throw customError;
       }
-      await updateProduct(productInputDto).unwrap();
+
+      const formData = new FormData();
+      let key: keyof UpdateProductDto;
+      for (key in productInputDto) {
+        formData.append(key, String(productInputDto[key]));
+      }
+
+      if (image) {
+        if (
+          image.type !== "image/png" &&
+          image.type !== "image/jpg" &&
+          image.type !== "image/jpeg"
+        ) {
+          throw new Error("File is not of type image");
+        }
+        formData.append("image", image);
+      }
+      await updateProduct(formData).unwrap();
       toast.success("Product updated succesfully");
       navigate("/admin/products");
     } catch (error) {
@@ -112,7 +130,18 @@ const AdminEditProduct: React.FC<Props> = (props) => {
               }
             />
           </Form.Group>
-          {/* IMAGE INPUT PLACEHOLDER */}
+          <Form.Group controlId="image" className="my-2">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const target = e.target as HTMLInputElement;
+                const file = target.files ? target.files[0] : null;
+                setImage(file);
+              }}
+            />
+          </Form.Group>
           <Form.Group controlId="brand" className="my-2">
             <Form.Label>Brand</Form.Label>
             <Form.Control

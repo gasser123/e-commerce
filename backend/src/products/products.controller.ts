@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UnprocessableEntityException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -75,11 +76,21 @@ export class ProductsController {
 
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          exceptionFactory: () => "invalid file type",
+          exceptionFactory: (error) => {
+            throw new UnprocessableEntityException(error);
+          },
+          fileIsRequired: false,
         }),
     )
-    file: Express.Multer.File,
+    file: Express.Multer.File | undefined,
   ) {
-    return this.productsService.updateProduct(id, body);
+    let image: string | null = null;
+    if (file) {
+      const SERVER_URL = this.configService.getOrThrow<string>("SERVER_URL");
+      image = SERVER_URL + "/" + file.path.replace("\\", "/");
+    }
+
+    const updateProductInfo = image ? { ...body, image } : body;
+    return this.productsService.updateProduct(id, updateProductInfo);
   }
 }
