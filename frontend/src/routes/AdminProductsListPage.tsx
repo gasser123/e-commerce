@@ -6,9 +6,13 @@ import { isQueryError } from "../util/validate-error-type";
 import { Row, Col, Button } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
+import { useState } from "react";
 const AdminProductsListPage = () => {
   const { data: products, isLoading, error } = useGetProductsQuery();
-
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const setLoadingDeleteState = (value: boolean) => {
+    setLoadingDelete(value);
+  };
   return (
     <>
       <Row className="align-items-center">
@@ -23,12 +27,15 @@ const AdminProductsListPage = () => {
           </LinkContainer>
         </Col>
       </Row>
-      {isLoading ? (
+      {isLoading || loadingDelete ? (
         <LoadingSpinner />
       ) : error && isQueryError(error) ? (
         <Message variant="danger">{error.data.message}</Message>
       ) : products ? (
-        <AdminProductsList products={products} />
+        <AdminProductsList
+          products={products}
+          setLoadingDeleteState={setLoadingDeleteState}
+        />
       ) : null}
     </>
   );

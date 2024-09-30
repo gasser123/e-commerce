@@ -1,12 +1,22 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Product } from "./product.entity";
 import { removeImage } from "src/util/removeImage";
+import { OrderItemsService } from "src/order-items/order-items.service";
+import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class ProductsService {
   repo: Repository<Product>;
-  constructor(@InjectRepository(Product) repo: Repository<Product>) {
+  constructor(
+    @InjectRepository(Product) repo: Repository<Product>,
+    private orderItemsService: OrderItemsService,
+    private configService: ConfigService,
+  ) {
     this.repo = repo;
   }
 
@@ -37,5 +47,27 @@ export class ProductsService {
 
     Object.assign(product, productInfo);
     return this.repo.save(product);
+  }
+
+  async removeProduct(id: number) {
+    const product = await this.repo.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException("product not found");
+    }
+
+    const orderItems = await this.orderItemsService.findWithProduct(product.id);
+    if (orderItems.length > 0) {
+      throw new BadRequestException(
+        "can't delete product referenced in an order",
+      );
+    }
+    const SERVER_URL = this.configService.getOrThrow<string>("SERVER_URL");
+    if (product.image.startsWith(`${SERVER_URL}/uploads`)) {
+      const arr = product.image.split("uploads");
+      const imagePath = "uploads" + arr[arr.length - 1];
+      await removeImage(imagePath);
+    }
+
+    return this.repo.remove(product);
   }
 }

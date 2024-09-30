@@ -13,4 +13,16 @@ export class OrderItemsService {
     const orderItem = this.repo.create(orderItemInfo);
     return this.repo.save(orderItem);
   }
+
+  findBy(orderItemInfo: Partial<OrderItem>) {
+    return this.repo.findBy(orderItemInfo);
+  }
+
+  findWithProduct(id: number) {
+    return this.repo.find({
+      where: {
+        product: { id },
+      },
+    });
+  }
 }

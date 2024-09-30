@@ -2,14 +2,43 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button } from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Product } from "../../schemas/Product.schema";
+import { useDeleteProductMutation } from "../../app/features/productsApiEndpoints";
+import { toast } from "react-toastify";
+import {
+  isCustomErrorResponse,
+  isFetchBaseQueryError,
+} from "../../util/validate-error-type";
 interface Props {
   products: Product[];
   children?: React.ReactNode;
+  setLoadingDeleteState: (value: boolean) => void;
 }
 const AdminProductsList: React.FC<Props> = (props) => {
-  const { products } = props;
-  const deleteHandler = (id: number) => {
-    console.log("delete", id);
+  const { products, setLoadingDeleteState } = props;
+  const [deleteProduct] = useDeleteProductMutation();
+  const deleteHandler = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      setLoadingDeleteState(true);
+      try {
+        await deleteProduct(id).unwrap();
+        toast.success("product deleted successfully");
+        setLoadingDeleteState(false);
+      } catch (error) {
+        if (isFetchBaseQueryError(error)) {
+          const { data } = error;
+          if (isCustomErrorResponse(data)) {
+            if (typeof data.message === "string") {
+              toast.error(data.message);
+            } else {
+              data.message.forEach((element) => toast.error(element));
+            }
+          }
+        } else if (error instanceof Error) {
+          toast.error(error.message);
+        }
+        setLoadingDeleteState(false);
+      }
+    }
   };
   return (
     <>

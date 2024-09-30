@@ -44,9 +44,6 @@ export class OrdersService {
             "product count in stock is less than quantity required",
           );
         }
-
-        product.countInStock = product.countInStock - orderItemInstance.qty;
-        await queryRunner.manager.save(product);
         orderItemInstance.product = product;
         orderItemInstance.order = order;
         await queryRunner.manager.save(orderItemInstance);
@@ -93,6 +90,17 @@ export class OrdersService {
     });
   }
 
+  findOneByJoinOrderItemJoinProduct(orderInfo: Partial<Order>) {
+    return this.repo.findOne({
+      where: orderInfo,
+      relations: {
+        orderItems: {
+          product: true,
+        },
+      },
+    });
+  }
+
   async findOrderUser(orderInfo: Partial<Order>) {
     const order = await this.repo.findOne({
       where: orderInfo,
@@ -108,22 +116,50 @@ export class OrdersService {
     return order.user;
   }
 
-  async updateOrderToPaid(id: number, paymentResult: PaymentResult) {
-    const order = await this.findOneBy({ id });
-    if (!order) {
-      throw new NotFoundException("order not found");
-    }
+  async updateOrderToPaid(
+    id: number,
+    paymentResult: PaymentResult,
+  ): Promise<Order> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const order = await queryRunner.manager.findOne(Order, {
+        where: { id },
+        relations: {
+          orderItems: {
+            product: true,
+          },
+        },
+      });
+      if (!order) {
+        throw new NotFoundException("order not found");
+      }
 
-    if (order.isPaid) {
-      throw new BadRequestException("order is already paid");
-    }
-    order.isPaid = true;
-    order.paidAt = new Date();
-    order.paymentResult = {
-      ...paymentResult,
-    };
+      if (order.isPaid) {
+        throw new BadRequestException("order is already paid");
+      }
 
-    return this.repo.save(order);
+      for (const orderItem of order.orderItems) {
+        orderItem.product.countInStock =
+          orderItem.product.countInStock - orderItem.qty;
+        await queryRunner.manager.save(orderItem.product);
+      }
+
+      order.isPaid = true;
+      order.paidAt = new Date();
+      order.paymentResult = {
+        ...paymentResult,
+      };
+      const savedOrder = await queryRunner.manager.save(order);
+      await queryRunner.commitTransaction();
+      return savedOrder;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async updateOrderToDelivered(id: number) {

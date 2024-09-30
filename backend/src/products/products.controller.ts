@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -92,5 +93,11 @@ export class ProductsController {
 
     const updateProductInfo = image ? { ...body, image } : body;
     return this.productsService.updateProduct(id, updateProductInfo);
+  }
+
+  @UseGuards(AuthGuard, AdminGuard)
+  @Delete("/:id")
+  deleteProduct(@Param("id", ParseIntPipe) id: number) {
+    return this.productsService.removeProduct(id);
   }
 }
