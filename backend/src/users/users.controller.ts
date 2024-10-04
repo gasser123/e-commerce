@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -22,6 +23,7 @@ import { SignupDto } from "./dtos/signup.dto";
 import { CurrentUser } from "src/decorators/current-user.decorator";
 import { User } from "./user.entity";
 import { UpdateUserDto } from "./dtos/update-user.dto";
+import { AdminUpdateUserDto } from "./dtos/admin-update-user.dto";
 
 @Controller("users")
 export class UsersController {
@@ -106,28 +108,39 @@ export class UsersController {
     return this.authService.updateProfile(user.id, updateUserDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   @UseGuards(AuthGuard, AdminGuard)
   getUsers() {
-    return "get users";
+    return this.usersService.getAllUsers();
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("/:id")
   @UseGuards(AuthGuard, AdminGuard)
-  getUser(@Param("id", ParseIntPipe) id: number) {
-    return "get user with id = " + id;
+  async getUser(@Param("id", ParseIntPipe) id: number) {
+    const user = await this.usersService.getUser({ id });
+    if (!user) {
+      throw new NotFoundException("user not found");
+    }
+    return user;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Delete("/:id")
   @UseGuards(AuthGuard, AdminGuard)
   deleteUser(@Param("id", ParseIntPipe) id: number) {
-    return "delete user with id = " + id;
+    return this.usersService.deleteUser(id);
   }
 
   // admin updates user info
+  @UseInterceptors(ClassSerializerInterceptor)
   @Patch("/:id")
   @UseGuards(AuthGuard, AdminGuard)
-  updateUser(@Param("id", ParseIntPipe) id: number) {
-    return "admin updates user with id = " + id;
+  updateUser(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() body: AdminUpdateUserDto,
+  ) {
+    return this.authService.updateUser(id, body);
   }
 }

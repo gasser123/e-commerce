@@ -11,6 +11,7 @@ const AdminOrdersList = () => {
 
   return (
     <>
+      <h1>Orders</h1>
       {isLoading ? (
         <LoadingSpinner />
       ) : error && isQueryError(error) ? (

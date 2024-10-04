@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
@@ -9,6 +10,7 @@ import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { SignupDto } from "./dtos/signup.dto";
 import { UpdateUserDto } from "./dtos/update-user.dto";
+import { AdminUpdateUserDto } from "./dtos/admin-update-user.dto";
 @Injectable()
 export class AuthService {
   usersService: UsersService;
@@ -82,5 +84,24 @@ export class AuthService {
     } else {
       return this.usersService.updateUser(id, { email, name });
     }
+  }
+
+  async updateUser(id: number, adminUpdateUserDto: AdminUpdateUserDto) {
+    const user = await this.usersService.getUser({ id });
+    if (!user) {
+      throw new NotFoundException("user not found");
+    }
+
+    if (user.isAdmin) {
+      throw new BadRequestException("can't update an admin user");
+    }
+    const existingUser = await this.usersService.getUser({
+      email: adminUpdateUserDto.email,
+    });
+    if (existingUser && existingUser.id !== id) {
+      throw new BadRequestException("email already exists");
+    }
+
+    return this.usersService.updateUser(id, adminUpdateUserDto);
   }
 }

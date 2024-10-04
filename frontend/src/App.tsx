@@ -22,6 +22,8 @@ import AdminOrdersListPage from "./routes/AdminOrdersListPage";
 import AdminProductsListPage from "./routes/AdminProductsListPage";
 import AdminCreateProductPage from "./routes/AdminCreateProductPage";
 import AdminEditProductPage from "./routes/AdminEditProductPage";
+import AdminUsersListPage from "./routes/AdminUsersListPage";
+import AdminEditUserPage from "./routes/AdminEditUserPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -95,6 +97,19 @@ const router = createBrowserRouter([
               {
                 path: ":id/edit",
                 element: <AdminEditProductPage />,
+              },
+            ],
+          },
+          {
+            path: "/admin/users",
+            children: [
+              {
+                index: true,
+                element: <AdminUsersListPage />,
+              },
+              {
+                path: ":id/edit",
+                element: <AdminEditUserPage />,
               },
             ],
           },

@@ -3,6 +3,7 @@ import { UserInfo } from "../../schemas/UserInfo.schema";
 import { LoginInput } from "../../schemas/LoginInput.schema";
 import { RegisterDto } from "../../schemas/RegisterInput.schema";
 import { UpdateProfileDto } from "../../schemas/UpdateProfileDto.schema";
+import { AdminUpdateUserDto } from "../../schemas/AdminUpdateUserDto.schema";
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
@@ -43,6 +44,38 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    getAllUsers: builder.query<UserInfo[], void>({
+      query: () => ({
+        url: "/users",
+        credentials: "include",
+      }),
+      keepUnusedDataFor: 5,
+      providesTags: ["User"],
+    }),
+
+    getUser: builder.query<UserInfo, number>({
+      query: (id) => ({ url: `/users/${id}`, credentials: "include" }),
+
+      keepUnusedDataFor: 5,
+      providesTags: (_result, _error, arg) => [{ type: "User", id: arg }],
+    }),
+    deleteUser: builder.mutation<UserInfo, number>({
+      query: (id) => ({
+        url: `/users/${id}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["User"],
+    }),
+    updateUser: builder.mutation<UserInfo, AdminUpdateUserDto>({
+      query: (data) => ({
+        url: `/users/${data.id}`,
+        method: "PATCH",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -51,4 +84,8 @@ export const {
   useLogoutMutation,
   useRegisterMutation,
   useUpdateProfileMutation,
+  useGetAllUsersQuery,
+  useGetUserQuery,
+  useDeleteUserMutation,
+  useUpdateUserMutation,
 } = usersApiSlice;

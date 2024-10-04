@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -35,5 +36,28 @@ export class UsersService {
     Object.assign(user, userInfo);
 
     return this.repo.save(user);
+  }
+
+  async deleteUser(id: number) {
+    const user = await this.repo.findOne({
+      where: { id },
+      relations: {
+        orders: true,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    if (user.isAdmin) {
+      throw new BadRequestException("Can't delete an admin user");
+    }
+
+    if (user.orders.length > 0) {
+      throw new BadRequestException(
+        "Can't delete a user referenced in an order",
+      );
+    }
+    return this.repo.remove(user);
   }
 }
