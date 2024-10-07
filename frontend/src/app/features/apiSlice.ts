@@ -6,7 +6,7 @@ export const apiSlice = createApi({
   // base URL for fetching
   baseQuery: fetchBaseQuery({ baseUrl: SERVER_URL }),
   // used for caching
-  tagTypes: ["Product", "User", "Order"],
+  tagTypes: ["Product", "User", "Order", "Review"],
   
   endpoints: () => ({}),
 });

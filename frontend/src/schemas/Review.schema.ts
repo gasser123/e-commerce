@@ -3,11 +3,10 @@ import { ProductSchema } from "./Product.schema";
 import { UserInfoSchema } from "./UserInfo.schema";
 export const ReviewSchema = z.object({
   id: z.number(),
-  name: z.string(),
   rating: z.number(),
   comment: z.string(),
-  user: UserInfoSchema,
-  product: ProductSchema,
+  user: z.optional(UserInfoSchema),
+  product: z.optional(ProductSchema),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });

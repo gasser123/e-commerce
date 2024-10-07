@@ -16,7 +16,7 @@ import {
 @Check(`"countInStock" >= 0`)
 @Check(`"numReviews" >= 0`)
 @Check(`"price" >= 0`)
-@Check(`"rating" >= 0`)
+@Check(`"rating" >= 0 AND "rating" <= 5`)
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;

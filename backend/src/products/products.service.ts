@@ -24,10 +24,31 @@ export class ProductsService {
     return this.repo.find();
   }
 
+  findOneByWithReviewsJoinUser(
+    productInfo: Partial<Product>,
+  ): Promise<Product | null> {
+    return this.repo.findOne({
+      where: productInfo,
+      relations: {
+        reviews: {
+          user: true,
+        },
+      },
+    });
+  }
+
   findOneBy(productInfo: Partial<Product>): Promise<Product | null> {
     return this.repo.findOneBy(productInfo);
   }
 
+  findOneByWithReviews(productInfo: Partial<Product>): Promise<Product | null> {
+    return this.repo.findOne({
+      where: productInfo,
+      relations: {
+        reviews: true,
+      },
+    });
+  }
   createProduct(productInfo: Partial<Product>) {
     const product = this.repo.create(productInfo);
     return this.repo.save(product);
@@ -69,5 +90,19 @@ export class ProductsService {
     }
 
     return this.repo.remove(product);
+  }
+
+  async updateProductForReview(productId: number) {
+    const product = await this.findOneByWithReviews({ id: productId });
+    if (!product) {
+      throw new NotFoundException("Product not found");
+    }
+
+    product.numReviews = product.reviews.length;
+    product.rating =
+      product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+      product.reviews.length;
+
+    return this.repo.save(product);
   }
 }

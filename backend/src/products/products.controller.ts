@@ -1,14 +1,17 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseFilePipeBuilder,
   ParseIntPipe,
   Patch,
   Post,
+  SerializeOptions,
   UnprocessableEntityException,
   UploadedFile,
   UseGuards,
@@ -23,6 +26,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { ConfigService } from "@nestjs/config";
 import { CurrentUser } from "src/decorators/current-user.decorator";
 import { User } from "src/users/user.entity";
+import { ProductDetailsDto } from "./dtos/product-details.dto";
 @Controller("products")
 export class ProductsController {
   constructor(
@@ -33,10 +37,19 @@ export class ProductsController {
   getProducts() {
     return this.productsService.findAll();
   }
-
+  @SerializeOptions({
+    excludeExtraneousValues: true,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("/:id")
-  getProduct(@Param("id", ParseIntPipe) id: number) {
-    return this.productsService.findOneBy({ id });
+  async getProduct(@Param("id", ParseIntPipe) id: number) {
+    const product = await this.productsService.findOneByWithReviewsJoinUser({
+      id,
+    });
+    if (!product) {
+      throw new NotFoundException("product not found");
+    }
+    return new ProductDetailsDto(product);
   }
 
   @UseGuards(AuthGuard, AdminGuard)

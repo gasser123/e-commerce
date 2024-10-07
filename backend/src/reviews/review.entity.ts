@@ -10,13 +10,11 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 @Entity()
-@Check(`"rating" >= 0`)
+@Check(`"rating" >= 0 AND "rating" <= 5`)
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
-  name: string;
-
+  
   @Column()
   rating: number;
 

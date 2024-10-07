@@ -8,4 +8,15 @@ export class ReviewsService {
   constructor(@InjectRepository(Review) repo: Repository<Review>) {
     this.repo = repo;
   }
+
+  createReview(reviewInfo: Partial<Review>) {
+    const review = this.repo.create(reviewInfo);
+    return this.repo.save(review);
+  }
+
+  findUserReviewForProduct(userId: number, productId: number) {
+    return this.repo.findOne({
+      where: { user: { id: userId }, product: { id: productId } },
+    });
+  }
 }

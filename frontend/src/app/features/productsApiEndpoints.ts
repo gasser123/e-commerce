@@ -1,5 +1,6 @@
 import { apiSlice } from "./apiSlice";
 import { Product } from "../../schemas/Product.schema";
+import { ProductJoins } from "../../schemas/ProductJoins.schema";
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
@@ -13,7 +14,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
       providesTags: ["Product"],
     }),
-    getProduct: builder.query<Product, number>({
+    getProduct: builder.query<ProductJoins, number>({
       query: (id) => ({ url: `/products/${id}` }),
 
       keepUnusedDataFor: 5,
