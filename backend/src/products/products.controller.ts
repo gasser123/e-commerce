@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   SerializeOptions,
   UnprocessableEntityException,
   UploadedFile,
@@ -27,6 +28,7 @@ import { ConfigService } from "@nestjs/config";
 import { CurrentUser } from "src/decorators/current-user.decorator";
 import { User } from "src/users/user.entity";
 import { ProductDetailsDto } from "./dtos/product-details.dto";
+import { GetProductsDto } from "./dtos/get-products.dto";
 @Controller("products")
 export class ProductsController {
   constructor(
@@ -34,8 +36,18 @@ export class ProductsController {
     private configService: ConfigService,
   ) {}
   @Get()
-  getProducts() {
-    return this.productsService.findAll();
+  async getProducts(@Query("page") page: string | undefined) {
+    const pageNumber = Number(page) || 1;
+    const pageSize = 4;
+    const [products, total] = await this.productsService.findAndCount(
+      pageSize,
+      pageNumber,
+    );
+    return new GetProductsDto({
+      products,
+      page: pageNumber,
+      pages: Math.ceil(total / pageSize),
+    });
   }
   @SerializeOptions({
     excludeExtraneousValues: true,

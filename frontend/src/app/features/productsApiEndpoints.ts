@@ -1,15 +1,19 @@
 import { apiSlice } from "./apiSlice";
 import { Product } from "../../schemas/Product.schema";
 import { ProductJoins } from "../../schemas/ProductJoins.schema";
+import { GetProductsDto } from "../../schemas/GetProductsDto.schema";
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
     // query for GET request while mutation is for other http methods
     // you should supply generics for the return type and the expected query argument: build.query<ReturnType, ArgType>.
     // If there is no argument, use void for the arg type instead
-    getProducts: builder.query<Product[], void>({
-      query: () => ({
+    getProducts: builder.query<GetProductsDto, number>({
+      query: (page) => ({
         url: "/products",
+        params: {
+          page,
+        },
       }),
       keepUnusedDataFor: 5,
       providesTags: ["Product"],

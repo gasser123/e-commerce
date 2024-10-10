@@ -20,8 +20,14 @@ export class ProductsService {
     this.repo = repo;
   }
 
-  findAll(): Promise<Product[]> {
-    return this.repo.find();
+  findAndCount(pageSize: number, pageNumber: number) {
+    return this.repo.findAndCount({
+      order: {
+        createdAt: "DESC",
+      },
+      take: pageSize,
+      skip: pageSize * (pageNumber - 1),
+    });
   }
 
   findOneByWithReviewsJoinUser(

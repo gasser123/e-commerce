@@ -7,8 +7,13 @@ import { Row, Col, Button } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import Paginate from "../components/UI/Paginate";
 const AdminProductsListPage = () => {
-  const { data: products, isLoading, error } = useGetProductsQuery();
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page");
+  const pageNumber = page ? parseInt(page) : 1;
+  const { data, isLoading, error } = useGetProductsQuery(pageNumber);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const setLoadingDeleteState = (value: boolean) => {
     setLoadingDelete(value);
@@ -31,11 +36,14 @@ const AdminProductsListPage = () => {
         <LoadingSpinner />
       ) : error && isQueryError(error) ? (
         <Message variant="danger">{error.data.message}</Message>
-      ) : products ? (
-        <AdminProductsList
-          products={products}
-          setLoadingDeleteState={setLoadingDeleteState}
-        />
+      ) : data ? (
+        <>
+          <AdminProductsList
+            products={data.products}
+            setLoadingDeleteState={setLoadingDeleteState}
+          />
+          <Paginate page={data.page} pages={data.pages} />
+        </>
       ) : null}
     </>
   );
