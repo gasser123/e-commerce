@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { Product } from "./product.entity";
 import { removeImage } from "src/util/removeImage";
 import { OrderItemsService } from "src/order-items/order-items.service";
@@ -20,8 +20,27 @@ export class ProductsService {
     this.repo = repo;
   }
 
-  findAndCount(pageSize: number, pageNumber: number) {
+  findAndCount(pageSize: number, pageNumber: number, keyword?: string) {
     return this.repo.findAndCount({
+      where: keyword
+        ? [
+            {
+              name: ILike(`%${keyword}%`),
+            },
+
+            {
+              category: ILike(`%${keyword}%`),
+            },
+
+            {
+              brand: ILike(`%${keyword}%`),
+            },
+
+            {
+              description: ILike(`%${keyword}%`),
+            },
+          ]
+        : undefined,
       order: {
         createdAt: "DESC",
       },

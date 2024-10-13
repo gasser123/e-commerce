@@ -8,11 +8,15 @@ export const productsApiSlice = apiSlice.injectEndpoints({
     // query for GET request while mutation is for other http methods
     // you should supply generics for the return type and the expected query argument: build.query<ReturnType, ArgType>.
     // If there is no argument, use void for the arg type instead
-    getProducts: builder.query<GetProductsDto, number>({
-      query: (page) => ({
+    getProducts: builder.query<
+      GetProductsDto,
+      { page: number; search?: string }
+    >({
+      query: ({ page, search }) => ({
         url: "/products",
         params: {
           page,
+          search,
         },
       }),
       keepUnusedDataFor: 5,

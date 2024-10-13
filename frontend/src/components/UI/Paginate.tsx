@@ -4,17 +4,18 @@ import { Path } from "react-router-dom";
 interface Props {
   pages: number;
   page: number;
+  search?: string | null;
   children?: React.ReactNode;
 }
 const Paginate: React.FC<Props> = (props) => {
-  const { pages, page } = props;
+  const { pages, page, search } = props;
 
   return pages > 1 ? (
     <Pagination>
       {[...Array(pages).keys()].map((x) => {
         const url: Partial<Path> = {
           pathname: "",
-          search: `?page=${x + 1}`,
+          search: `?page=${x + 1}${search ? `&search=${search}` : ""}`,
         };
 
         return (

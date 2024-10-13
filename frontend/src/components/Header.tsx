@@ -12,6 +12,7 @@ import {
   isCustomErrorResponse,
   isFetchBaseQueryError,
 } from "../util/validate-error-type";
+import SearchBox from "./UI/SearchBox";
 /* 
 When the screen size is below the lg breakpoint, the Navbar.Toggle button will appear. 
 Clicking this button will show or hide the Navbar.Collapse content, providing a responsive navigation experience.
@@ -66,6 +67,7 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
+              <SearchBox />
               <LinkContainer to="/cart">
                 <Nav.Link>
                   <FaShoppingCart /> Cart

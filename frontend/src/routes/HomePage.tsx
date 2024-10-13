@@ -3,13 +3,17 @@ import { useGetProductsQuery } from "../app/features/productsApiEndpoints";
 import { isQueryError } from "../util/validate-error-type";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
 import Message from "../components/UI/Message";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Paginate from "../components/UI/Paginate";
 const HomePage = () => {
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
+  const search = searchParams.get("search");
   const pageNumber = page ? parseInt(page) : 1;
-  const { data, isLoading, isError, error } = useGetProductsQuery(pageNumber);
+  const { data, isLoading, isError, error } = useGetProductsQuery({
+    page: pageNumber,
+    search: search ? search : undefined,
+  });
   let content = <></>;
   if (!data || (data && data.products.length === 0)) {
     content = <h2>No products found at the moment</h2>;
@@ -18,7 +22,14 @@ const HomePage = () => {
   }
   return (
     <>
-      <h1>Latest products</h1>
+      {search ? (
+        <Link to="/" className="btn btn-secondary mb-4">
+          Go Back
+        </Link>
+      ) : (
+        <h1>Latest products</h1>
+      )}
+
       {isLoading ? (
         <LoadingSpinner />
       ) : isError && isQueryError(error) ? (
@@ -26,7 +37,9 @@ const HomePage = () => {
       ) : (
         <>
           {content}
-          {data ? <Paginate page={data.page} pages={data.pages} /> : null}
+          {data ? (
+            <Paginate page={data.page} pages={data.pages} search={search} />
+          ) : null}
         </>
       )}
     </>

@@ -13,7 +13,7 @@ const AdminProductsListPage = () => {
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
   const pageNumber = page ? parseInt(page) : 1;
-  const { data, isLoading, error } = useGetProductsQuery(pageNumber);
+  const { data, isLoading, error } = useGetProductsQuery({ page: pageNumber });
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const setLoadingDeleteState = (value: boolean) => {
     setLoadingDelete(value);
