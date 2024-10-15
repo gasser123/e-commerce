@@ -5,6 +5,8 @@ import LoadingSpinner from "../components/UI/LoadingSpinner";
 import Message from "../components/UI/Message";
 import { Link, useSearchParams } from "react-router-dom";
 import Paginate from "../components/UI/Paginate";
+import ProductCarousel from "../components/products/ProductCarousel";
+import Meta from "../components/Meta";
 const HomePage = () => {
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
@@ -27,7 +29,10 @@ const HomePage = () => {
           Go Back
         </Link>
       ) : (
-        <h1>Latest products</h1>
+        <>
+          <ProductCarousel />
+          <h1>Latest products</h1>
+        </>
       )}
 
       {isLoading ? (
@@ -36,6 +41,7 @@ const HomePage = () => {
         <Message variant="danger">{`Error ${error.status} ${error.data.message}`}</Message>
       ) : (
         <>
+          <Meta />
           {content}
           {data ? (
             <Paginate page={data.page} pages={data.pages} search={search} />

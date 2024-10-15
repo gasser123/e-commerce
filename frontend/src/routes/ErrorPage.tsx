@@ -1,6 +1,7 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useRouteError, ErrorResponse } from "react-router-dom";
+import Meta from "../components/Meta";
 function ErrorPage() {
   const error = useRouteError() as ErrorResponse;
   let title = "An error occured :(";
@@ -18,6 +19,7 @@ function ErrorPage() {
 
   return (
     <>
+      <Meta title="Error" />
       <Header />
       <main>
         <h1>{title}</h1>

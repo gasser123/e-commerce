@@ -4,6 +4,7 @@ import { json, useParams } from "react-router-dom";
 import { isQueryError } from "../util/validate-error-type";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
 import Message from "../components/UI/Message";
+import Meta from "../components/Meta";
 const ProductDetailsPage = () => {
   const params = useParams();
   const idParam = params.id;
@@ -17,7 +18,12 @@ const ProductDetailsPage = () => {
   if (!product) {
     content = <h2>No product found at the moment</h2>;
   } else {
-    content = <ProductDetails product={product} />;
+    content = (
+      <>
+        <Meta title={product.name} description={product.description} />
+        <ProductDetails product={product} />
+      </>
+    );
   }
 
   return (

@@ -4,6 +4,7 @@ import LoadingSpinner from "../components/UI/LoadingSpinner";
 import { useGetOrderDetailsQuery } from "../app/features/ordersApiEndpoints";
 import { json, useParams } from "react-router-dom";
 import { isQueryError } from "../util/validate-error-type";
+import Meta from "../components/Meta";
 const OrderPage = () => {
   const params = useParams();
   const idParam = params.id;
@@ -11,14 +12,22 @@ const OrderPage = () => {
     throw json({ message: "not found" }, { status: 404 });
   }
   const id = parseInt(idParam);
-  const { data: order, isLoading, error, refetch } = useGetOrderDetailsQuery(id);
+  const {
+    data: order,
+    isLoading,
+    error,
+    refetch,
+  } = useGetOrderDetailsQuery(id);
 
   return isLoading ? (
     <LoadingSpinner />
   ) : error && isQueryError(error) ? (
     <Message variant="danger">{`Error ${error.status} ${error.data.message}`}</Message>
   ) : order ? (
-    <Order order={order} refetch={refetch} />
+    <>
+      <Meta title="Order" />
+      <Order order={order} refetch={refetch} />
+    </>
   ) : null;
 };
 

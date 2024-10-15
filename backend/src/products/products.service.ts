@@ -130,4 +130,13 @@ export class ProductsService {
 
     return this.repo.save(product);
   }
+
+  getTopThree(): Promise<Product[]> {
+    return this.repo.find({
+      order: {
+        rating: "DESC",
+      },
+      take: 3,
+    });
+  }
 }

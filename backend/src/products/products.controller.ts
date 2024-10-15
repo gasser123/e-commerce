@@ -36,13 +36,16 @@ export class ProductsController {
     private configService: ConfigService,
   ) {}
   @Get()
-  async getProducts(@Query("page") page: string | undefined, @Query("search") search: string | undefined) {
+  async getProducts(
+    @Query("page") page: string | undefined,
+    @Query("search") search: string | undefined,
+  ) {
     const pageNumber = Number(page) || 1;
     const pageSize = 4;
     const [products, total] = await this.productsService.findAndCount(
       pageSize,
       pageNumber,
-      search
+      search,
     );
     return new GetProductsDto({
       products,
@@ -50,6 +53,12 @@ export class ProductsController {
       pages: Math.ceil(total / pageSize),
     });
   }
+
+  @Get("/top")
+  getTopProducts() {
+    return this.productsService.getTopThree();
+  }
+
   @SerializeOptions({
     excludeExtraneousValues: true,
   })
