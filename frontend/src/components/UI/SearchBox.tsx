@@ -2,7 +2,17 @@ import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
-const SearchBox = () => {
+interface Props {
+  searchParam?: string;
+  navigateUrl?: string;
+  placeholder?: string;
+}
+
+const SearchBox: React.FC<Props> = ({
+  searchParam = "search",
+  navigateUrl = "/",
+  placeholder = "Search Products...",
+}) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const search = searchParams.get("search");
@@ -11,10 +21,10 @@ const SearchBox = () => {
   const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     if (keyWord.trim()) {
-      navigate(`/?search=${keyWord}`);
+      navigate(`${navigateUrl}?${searchParam}=${keyWord}`);
       setKeyWord("");
     } else {
-      navigate("/");
+      navigate(navigateUrl);
     }
   };
 
@@ -27,10 +37,10 @@ const SearchBox = () => {
           setKeyWord(e.target.value);
         }}
         value={keyWord}
-        placeholder="Search Products..."
+        placeholder={placeholder}
         className="mr-sm-2 ml-sm-5"
       />
-      <Button type="submit" variant="outline-light" className="p-2 mx-2">
+      <Button type="submit" variant="btn btn-success" className="p-2 mx-2">
         {" "}
         Search
       </Button>

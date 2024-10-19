@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { User } from "./user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
@@ -14,8 +14,27 @@ export class UsersService {
     this.repo = repo;
   }
 
-  getAllUsers(): Promise<User[]> {
-    return this.repo.find();
+  findAndCount(pageNumber: number, pageSize: number, keyword?: string) {
+    return this.repo.findAndCount({
+      where: keyword
+        ? [
+            {
+              id: Number.isNaN(Number(keyword)) ? undefined : Number(keyword),
+            },
+            {
+              name: ILike(`%${keyword}%`),
+            },
+            {
+              email: ILike(`%${keyword}%`),
+            },
+          ]
+        : undefined,
+      order: {
+        createdAt: "DESC",
+      },
+      take: pageSize,
+      skip: pageSize * (pageNumber - 1),
+    });
   }
 
   getUser(userInfo: Partial<User>): Promise<User | null> {

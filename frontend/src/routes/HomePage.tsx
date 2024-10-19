@@ -44,7 +44,11 @@ const HomePage = () => {
           <Meta />
           {content}
           {data ? (
-            <Paginate page={data.page} pages={data.pages} search={search} />
+            <Paginate
+              page={data.page}
+              pages={data.pages}
+              search={search ? { param: "search", value: search } : null}
+            />
           ) : null}
         </>
       )}

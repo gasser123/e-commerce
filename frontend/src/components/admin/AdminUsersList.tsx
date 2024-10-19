@@ -14,8 +14,18 @@ import {
 } from "../../util/validate-error-type";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import Paginate from "../UI/Paginate";
+import SearchBox from "../UI/SearchBox";
 const AdminUsersList = () => {
-  const { data: users, isLoading, error } = useGetAllUsersQuery();
+  const [searchParams] = useSearchParams();
+  const page = searchParams.get("page");
+  const search = searchParams.get("keyword");
+  const pageNumber = page ? parseInt(page) : 1;
+  const { data, isLoading, error } = useGetAllUsersQuery({
+    page: pageNumber,
+    search: search ? search : undefined,
+  });
   const [deleteUser, { isLoading: loadingDelete, error: deleteError }] =
     useDeleteUserMutation();
   useEffect(() => {
@@ -51,54 +61,80 @@ const AdminUsersList = () => {
         <LoadingSpinner />
       ) : error && isQueryError(error) ? (
         <Message variant="danger">{error.data.message}</Message>
-      ) : users ? (
-        <Table striped bordered hover responsive className="table-sm">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>NAME</th>
-              <th>EMAIL</th>
-              <th>ADMIN</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>
-                  <a href={`mailto:${user.email}`}>{user.email}</a>
-                </td>
-                <td>
-                  {user.isAdmin ? (
-                    <FaCheck style={{ color: "green" }} />
-                  ) : (
-                    <FaTimes style={{ color: "red" }} />
-                  )}
-                </td>
-                <td>
-                  <LinkContainer to={`/admin/users/${user.id}/edit`}>
-                    <Button type="button" variant="light" className="btn-sm">
-                      <FaEdit />
-                    </Button>
-                  </LinkContainer>
-                  <Button
-                    type="button"
-                    variant="danger"
-                    className="btn-sm"
-                    onClick={() => {
-                      deleteHandler(user.id);
-                    }}
-                  >
-                    <FaTrash style={{ color: "white" }} />
-                  </Button>
-                </td>
+      ) : data && data.users.length ? (
+        <>
+          {search ? (
+            <Link to="/admin/users" className="btn btn-secondary mb-4">
+              Clear search results
+            </Link>
+          ) : null}
+          <SearchBox
+            navigateUrl="/admin/users"
+            searchParam="keyword"
+            placeholder="Search Users..."
+          />
+          <Table striped bordered hover responsive className="table-sm my-3">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>ADMIN</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      ) : null}
+            </thead>
+            <tbody>
+              {data.users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>
+                    <a href={`mailto:${user.email}`}>{user.email}</a>
+                  </td>
+                  <td>
+                    {user.isAdmin ? (
+                      <FaCheck style={{ color: "green" }} />
+                    ) : (
+                      <FaTimes style={{ color: "red" }} />
+                    )}
+                  </td>
+                  <td>
+                    <LinkContainer to={`/admin/users/${user.id}/edit`}>
+                      <Button type="button" variant="light" className="btn-sm">
+                        <FaEdit />
+                      </Button>
+                    </LinkContainer>
+                    <Button
+                      type="button"
+                      variant="danger"
+                      className="btn-sm"
+                      onClick={() => {
+                        deleteHandler(user.id);
+                      }}
+                    >
+                      <FaTrash style={{ color: "white" }} />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Paginate
+            page={data.page}
+            pages={data.pages}
+            search={search ? { param: "keyword", value: search } : null}
+          />
+        </>
+      ) : (
+        <>
+          {search ? (
+            <Link to="/admin/users" className="btn btn-secondary mb-4">
+              Clear search results
+            </Link>
+          ) : null}
+          <h2>No Users Found</h2>
+        </>
+      )}
     </>
   );
 };

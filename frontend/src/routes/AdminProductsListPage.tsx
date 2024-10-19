@@ -7,13 +7,18 @@ import { Row, Col, Button } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Paginate from "../components/UI/Paginate";
+import SearchBox from "../components/UI/SearchBox";
 const AdminProductsListPage = () => {
   const [searchParams] = useSearchParams();
   const page = searchParams.get("page");
+  const search = searchParams.get("keyword");
   const pageNumber = page ? parseInt(page) : 1;
-  const { data, isLoading, error } = useGetProductsQuery({ page: pageNumber });
+  const { data, isLoading, error } = useGetProductsQuery({
+    page: pageNumber,
+    search: search ? search : undefined,
+  });
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const setLoadingDeleteState = (value: boolean) => {
     setLoadingDelete(value);
@@ -36,15 +41,38 @@ const AdminProductsListPage = () => {
         <LoadingSpinner />
       ) : error && isQueryError(error) ? (
         <Message variant="danger">{error.data.message}</Message>
-      ) : data ? (
+      ) : data && data.products.length ? (
         <>
+          {search ? (
+            <Link to="/admin/products" className="btn btn-secondary mb-4">
+              Clear search results
+            </Link>
+          ) : null}
+          <SearchBox
+            navigateUrl="/admin/products"
+            searchParam="keyword"
+            placeholder="Search Products..."
+          />
           <AdminProductsList
             products={data.products}
             setLoadingDeleteState={setLoadingDeleteState}
           />
-          <Paginate page={data.page} pages={data.pages} />
+          <Paginate
+            page={data.page}
+            pages={data.pages}
+            search={search ? { param: "keyword", value: search } : null}
+          />
         </>
-      ) : null}
+      ) : (
+        <>
+          {search ? (
+            <Link to="/admin/products" className="btn btn-secondary mb-4">
+              Clear search results
+            </Link>
+          ) : null}
+          <h2>No Products Found</h2>
+        </>
+      )}
     </>
   );
 };

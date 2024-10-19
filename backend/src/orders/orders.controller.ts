@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
@@ -21,6 +22,7 @@ import { OrdersService } from "./orders.service";
 import { PaymentResultDto } from "./dtos/PaymentResult.dto";
 import { PaymentResult } from "./schemas/PaymentResult";
 import { ViewOrderGuard } from "./guards/view-order.guard";
+import { GetOrdersDto } from "./dtos/get-orders.dto";
 
 @Controller("orders")
 export class OrdersController {
@@ -80,7 +82,21 @@ export class OrdersController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   @UseGuards(AuthGuard, AdminGuard)
-  getAllOrders() {
-    return this.ordersService.findAllWithUsers();
+  async getAllOrders(
+    @Query("page") page: string | undefined,
+    @Query("search") search: string | undefined,
+  ) {
+    const pageNumber = Number(page) || 1;
+    const pageSize = 4;
+    const [orders, total] = await this.ordersService.findAndCountWithUsers(
+      pageSize,
+      pageNumber,
+      search,
+    );
+    return new GetOrdersDto({
+      orders,
+      page: pageNumber,
+      pages: Math.ceil(total / pageSize),
+    });
   }
 }

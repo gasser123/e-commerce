@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Res,
   UseGuards,
   UseInterceptors,
@@ -24,6 +25,7 @@ import { CurrentUser } from "src/decorators/current-user.decorator";
 import { User } from "./user.entity";
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { AdminUpdateUserDto } from "./dtos/admin-update-user.dto";
+import { GetUsersDto } from "./dtos/get-users.dto";
 
 @Controller("users")
 export class UsersController {
@@ -111,8 +113,19 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   @UseGuards(AuthGuard, AdminGuard)
-  getUsers() {
-    return this.usersService.getAllUsers();
+  async getUsers(@Query("page") page: string | undefined, @Query("search") search: string | undefined) {
+    const pageNumber = Number(page) || 1;
+    const pageSize = 4;
+    const [users, total] = await this.usersService.findAndCount(
+      pageNumber,
+      pageSize,
+      search
+    );
+    return new GetUsersDto({
+      users,
+      page: pageNumber,
+      pages: Math.ceil(total / pageSize),
+    });
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

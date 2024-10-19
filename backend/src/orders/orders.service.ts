@@ -2,10 +2,9 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { Order } from "./order.entity";
 import { OrderItem } from "src/order-items/order-items.entity";
 import { DataSource } from "typeorm";
@@ -64,8 +63,31 @@ export class OrdersService {
     return this.repo.findBy(orderInfo);
   }
 
-  findAllWithUsers() {
-    return this.repo.find({ relations: { user: true } });
+  findAndCountWithUsers(
+    pageSize: number,
+    pageNumber: number,
+    keyword?: string,
+  ) {
+    return this.repo.findAndCount({
+      where: keyword
+        ? [
+            {
+              id: !Number.isNaN(parseInt(keyword))
+                ? parseInt(keyword)
+                : undefined,
+            },
+            {
+              user: { name: ILike(`%${keyword}%`) },
+            },
+          ]
+        : undefined,
+      relations: { user: true },
+      order: {
+        createdAt: "DESC",
+      },
+      take: pageSize,
+      skip: pageSize * (pageNumber - 1),
+    });
   }
 
   findOneBy(orderInfo: Partial<Order>) {

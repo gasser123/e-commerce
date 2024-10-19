@@ -4,6 +4,7 @@ import { LoginInput } from "../../schemas/LoginInput.schema";
 import { RegisterDto } from "../../schemas/RegisterInput.schema";
 import { UpdateProfileDto } from "../../schemas/UpdateProfileDto.schema";
 import { AdminUpdateUserDto } from "../../schemas/AdminUpdateUserDto.schema";
+import { GetUsersDto } from "../../schemas/GetUsersDto.schema";
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // operations done on endpoints
@@ -44,9 +45,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-    getAllUsers: builder.query<UserInfo[], void>({
-      query: () => ({
+    getAllUsers: builder.query<GetUsersDto, { page: number; search?: string }>({
+      query: ({ page, search }) => ({
         url: "/users",
+        params: {
+          page,
+          search,
+        },
         credentials: "include",
       }),
       keepUnusedDataFor: 5,
