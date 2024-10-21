@@ -20,10 +20,13 @@ export const authSlice = createSlice({
     setCredentials: (state, action: PayloadAction<UserInfo>) => {
       state.userInfo = action.payload;
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
+      const tokenExpiration = Date.now() + 4 * 24 * 60 * 60 * 1000;
+      localStorage.setItem("tokenExpiration", tokenExpiration.toString());
     },
     logout: (state) => {
       state.userInfo = null;
       localStorage.removeItem("userInfo");
+      localStorage.removeItem("tokenExpiration");
     },
   },
 });
