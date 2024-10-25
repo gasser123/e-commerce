@@ -62,6 +62,7 @@ export class UsersService {
       where: { id },
       relations: {
         orders: true,
+        reviews: true,
       },
     });
     if (!user) {
@@ -77,6 +78,13 @@ export class UsersService {
         "Can't delete a user referenced in an order",
       );
     }
+
+    if (user.reviews.length > 0) {
+      throw new BadRequestException(
+        "Can't delete a user referenced in a review",
+      );
+    }
+
     return this.repo.remove(user);
   }
 }

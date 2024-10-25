@@ -23,7 +23,11 @@ import * as path from "path";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV}.local`, // set the NODE_ENV in the cli commands in package.json
+      envFilePath:
+        process.env.NODE_ENV === "development" ||
+        process.env.NODE_ENV === "test"
+          ? `.env.${process.env.NODE_ENV}.local`
+          : ".env", // set the NODE_ENV in the cli commands in package.json
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
