@@ -68,12 +68,12 @@ To run this project, you will need to add the following environment variables to
    - Add a directory named `uploads` in the backend directory.
    - Configure environment variables in `.env.development.local` for development and `.env.test.local` for testing.
    - ```bash
+      cd backend
       npm install    # Install packages
      ```
 
 2. **Run the Backend**:
    ```bash
-   cd backend
    npm run migration:run  # Run database migrations
    npm run seed           # Seed database with sample products and an admin user
    npm run start:dev      # Start the development server
@@ -84,11 +84,11 @@ To run this project, you will need to add the following environment variables to
 1. **Prepare Environment**:
 
    ```bash
+     cd frontend
      npm install    # Install packages
    ```
 
 2. **Run the Frontend**:
    ```bash
-   cd frontend
    npm run dev      # Start the development server
    ```
