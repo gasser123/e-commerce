@@ -23,8 +23,8 @@ MyShop is a feature-rich e-commerce platform that enables users to browse produc
 
 ### Backend
 
-- **Framework**: [NestJS]
-- **Database**: PostgreSQL (using [pg])
+- **Framework**: NestJS
+- **Database**: PostgreSQL (using pg)
 - **ORM**: TypeORM
 - **Utilities**: class-validator, class-transformer, cookie-parser, bcrypt for hashing
 - **Authentication**: JWT in httponly cookie
