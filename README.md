@@ -79,6 +79,6 @@ To run this project, you will need to add the following environment variables to
 ### Frontend
 
 ```bash
-cd backend
-npm run start:dev      # Start the development server
+cd frontend
+npm run dev      # Start the development server
 ```
