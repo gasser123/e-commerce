@@ -75,6 +75,7 @@ To run this project, you will need to add the following environment variables to
 2. **Run the Backend**:
    ```bash
    npm run migration:run  # Run database migrations
+   npm run build
    npm run seed           # Seed database with sample products and an admin user
    npm run start:dev      # Start the development server
    ```
